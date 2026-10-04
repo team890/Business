@@ -420,7 +420,7 @@
 
   <div class="campo">
     <label for="inTelefono">Teléfono móvil</label>
-    <input id="inTelefono" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="600000000" maxlength="9">
+    <input id="inTelefono" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="+34 123 45 67 89" maxlength="9">
     <div style="margin-top:6px; font-size:11px; color:#7a7a94;">Número de teléfono sin +34</div>
   </div>
 
@@ -483,7 +483,7 @@
       </div>
       <div id="acciones">
         <button id="btnNo" type="button" aria-label="Pasar">✕</button>
-        <button id="btnSi" type="button" aria-label="Me gusta">♥</button>
+        <button id="btnSi" type="button" aria-label="Me gusta">✓</button>
       </div>
     </section>
 
@@ -495,8 +495,9 @@
           <label for="p-tipo">¿Qué publicas?</label>
           <select id="p-tipo">
             <option>Habitación</option>
-            <option>Piso completo</option>
-            <option>Residencia de estudiantes</option>
+            <option>Piso</option>
+            <option>Residencia</option>
+            <option>Casa</option>
           </select>
         </div>
         <div class="campo2">
@@ -506,25 +507,26 @@
         <div class="fila2">
           <div class="campo2">
             <label for="p-ciudad">Ciudad</label>
-            <input id="p-ciudad" type="text" placeholder="Madrid" maxlength="30">
+            <input id="p-ciudad" type="text" placeholder="Barcelona" maxlength="30">
           </div>
           <div class="campo2">
-            <label for="p-barrio">Barrio / zona</label>
-            <input id="p-barrio" type="text" placeholder="Malasaña" maxlength="30">
+            <label for="p-barrio">Código postal</label>
+            <input id="p-barrio" type="text" placeholder="00000" maxlength="5" inputmode="numeric" pattern="[0-9]*">
           </div>
         </div>
         <div class="campo2">
           <label for="p-precio">Precio (€ / mes)</label>
-          <input id="p-precio" type="number" min="0" step="10" placeholder="550" inputmode="numeric">
+          <input id="p-precio" type="number" min="0" step="10" placeholder="Ingresa el precio" inputmode="numeric">
         </div>
         <div class="campo2">
           <label for="p-desc">Descripción</label>
-          <textarea id="p-desc" placeholder="Cuéntanos cómo es..." maxlength="280"></textarea>
+          <textarea id="p-desc" placeholder="Cuéntanos cómo es..." maxlength="500"></textarea>
         </div>
         <div class="campo2">
           <label for="p-tags">Etiquetas (separadas por comas)</label>
-          <input id="p-tags" type="text" placeholder="Amueblado, Wifi, Balcón" maxlength="80">
+          <input id="p-tags" type="text" placeholder="Gas incluido, Wifi incluido, Parking, Balcón, ...">
         </div>
+        <!--SEXOOOOOOOOOOOOOOOOOOOOOO-->
         <div class="campo2">
           <label>Elige un icono</label>
           <div class="iconos" id="iconos">
