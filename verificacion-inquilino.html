@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6d5efc">
+<title>PisoMatch | Verificación del inquilino</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { min-height: 100vh; background: #e9ebf5; color: #15152b; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  .pagina { width: min(100%, 680px); min-height: 100vh; margin: 0 auto; padding: 24px 18px 40px; background: #f6f7fb; }
+  header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .volver { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: #fff; color: #34344d; font-size: 23px; text-decoration: none; }
+  .marca { font-size: 18px; font-weight: 850; }
+  .marca span { color: #6d5efc; }
+  h1 { margin-bottom: 7px; font-size: 24px; line-height: 1.25; }
+  .intro, .privacidad { color: #72728c; font-size: 13.5px; line-height: 1.5; }
+  .intro { margin-bottom: 22px; }
+  .seccion { padding: 18px 0; border-top: 1px solid #e3e3ed; }
+  .seccion h2 { margin-bottom: 7px; font-size: 15px; }
+  .seccion p { margin-bottom: 12px; color: #72728c; font-size: 13px; line-height: 1.45; }
+  label.campo { display: block; margin: 12px 0 6px; font-size: 12px; font-weight: 750; }
+  input, select { width: 100%; min-height: 46px; padding: 11px 12px; border: 1px solid #e3e3ef; border-radius: 10px; background: #fff; color: #15152b; font: inherit; font-size: 15px; }
+  input[type=file] { min-height: auto; font-size: 13px; }
+  .metodos { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .metodo { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #e3e3ef; border-radius: 10px; background: #fff; font-size: 13px; cursor: pointer; }
+  .metodo input { width: 18px; min-height: 18px; height: 18px; accent-color: #6d5efc; }
+  .oculto { display: none; }
+  .privacidad { margin: 10px 0 16px; padding: 12px; border-radius: 9px; background: #efeff8; font-size: 12px; }
+  .continuar { width: 100%; padding: 15px; border: 0; border-radius: 12px; color: #fff; background: linear-gradient(90deg, #6d5efc, #ff5f8f); font-size: 15px; font-weight: 800; cursor: pointer; }
+  #mensaje { min-height: 20px; padding-top: 10px; color: #d92d20; font-size: 13px; }
+</style>
+</head>
+<body>
+<main class="pagina">
+  <header><a class="volver" href="main.html" aria-label="Volver al inicio">‹</a><div class="marca">Piso<span>Match</span></div></header>
+  <h1>Verificación del inquilino</h1>
+  <p class="intro">Completa la identidad y acredita que eres estudiante para continuar.</p>
+  <form id="formVerificacion">
+    <section class="seccion">
+      <h2>Identidad</h2>
+      <p>Adjunta una imagen o PDF de tu documento. Solo se comprobará que has seleccionado un archivo en esta demo.</p>
+      <label class="campo" for="tipoDocumento">Tipo de documento</label>
+      <select id="tipoDocumento" required><option value="">Selecciona una opción</option><option>DNI</option><option>NIE</option><option>Pasaporte</option></select>
+      <label class="campo" for="documentoIdentidad">DNI, NIE o pasaporte</label>
+      <input id="documentoIdentidad" type="file" accept="image/*,.pdf" required>
+    </section>
+    <section class="seccion">
+      <h2>Credencial académica</h2>
+      <p>Elige una forma de acreditar tus estudios actuales.</p>
+      <div class="metodos">
+        <label class="metodo"><input type="radio" name="metodoAcademico" value="correo" required>Correo institucional</label>
+        <label class="metodo"><input type="radio" name="metodoAcademico" value="matricula" required>Resguardo de matrícula</label>
+      </div>
+      <div id="bloqueCorreo" class="oculto">
+        <label class="campo" for="correoUniversidad">Correo de la universidad</label>
+        <input id="correoUniversidad" type="email" placeholder="nombre@estudiant.upc.edu" autocomplete="email">
+      </div>
+      <div id="bloqueMatricula" class="oculto">
+        <label class="campo" for="resguardoMatricula">Resguardo de matrícula vigente</label>
+        <input id="resguardoMatricula" type="file" accept="image/*,.pdf">
+      </div>
+    </section>
+    <section class="seccion">
+      <h2>Solvencia <span style="font-weight:500;color:#72728c">(opcional)</span></h2>
+      <p>Puedes adjuntar justificantes propios o avales de padres/tutores para transmitir mayor confianza al arrendador.</p>
+      <label class="campo" for="solvencia">Justificantes de ingresos o avales</label>
+      <input id="solvencia" type="file" accept="image/*,.pdf" multiple>
+    </section>
+    <p class="privacidad">Esta demo no envía ni conserva los documentos seleccionados. La verificación real de identidad, correo y matrícula requiere un servicio seguro con backend.</p>
+    <button class="continuar" type="submit">Continuar a la encuesta</button>
+    <div id="mensaje" role="alert"></div>
+  </form>
+</main>
+<script>
+(function(){
+  'use strict';
+  var perfil = null;
+  try { perfil = JSON.parse(sessionStorage.getItem('pm_onboarding_user') || 'null'); } catch(e){}
+  if (!perfil || perfil.rol !== 'inquilino'){ window.location.replace('main.html'); return; }
+  var correo = document.getElementById('correoUniversidad');
+  var matricula = document.getElementById('resguardoMatricula');
+  document.querySelectorAll('input[name="metodoAcademico"]').forEach(function(opcion){
+    opcion.addEventListener('change', function(){
+      var porCorreo = this.value === 'correo';
+      document.getElementById('bloqueCorreo').classList.toggle('oculto', !porCorreo);
+      document.getElementById('bloqueMatricula').classList.toggle('oculto', porCorreo);
+      correo.required = porCorreo;
+      matricula.required = !porCorreo;
+    });
+  });
+  document.getElementById('formVerificacion').addEventListener('submit', function(e){
+    e.preventDefault();
+    var mensaje = document.getElementById('mensaje');
+    mensaje.textContent = '';
+    if (!this.reportValidity()) return;
+    var metodo = new FormData(this).get('metodoAcademico');
+    if (metodo === 'correo'){
+      var dominio = correo.value.trim().toLowerCase().split('@').pop();
+      var partes = dominio.split('.');
+      var sufijo = partes[partes.length - 1];
+      var genericos = 'com org net edu gov mil int info biz name pro aero coop museum jobs mobi travel cat asia tel post xxx online site tech store app dev cloud digital email agency company solutions world xyz art blog club live news social website academy education consulting design center services network international'.split(' ');
+      var paises = 'ad ae af ag ai al am ao aq ar as at au aw ax az ba bb bd be bf bi bj bl bm bn bo bq br bs bt bv bw by bz ca cc cd cf cg ch cl cm cn co cr cu cv cw cx cy cz de dj dk dm do dz ec ee eg eh er es et eu fi fj fk fo fr ga gb gd ge gf gg gh gi gl gm gn gp gq gr gs gt gu gw gy hk hn hr ht hu id ie il im in io iq ir is it je jm jo jp ke kg kh ki km kn kr kw ky kz la lb lc lk lr ls lt lu lv ly ma mc md me mg mk ml mm mn mo mp mq mr ms mt mv mw mx my mz na ne nf ng ni nl no np nr nu nz om pa pe pf pg ph pk pl pr ps pt pw py qa re ro rs ru rw sa sb sc sd se sg sh si sj sk sl sm sn so sr ss st sv sx sy sz tc td tf tg th tj tl tm tn to tr tt tv tw tz ua ug uk us uy uz va vc ve vg vi vn vu wf ws ye yt za zm zw'.split(' ');
+      var personales = ['gmail.com','hotmail.com','outlook.com','yahoo.com','icloud.com','live.com','proton.me','aol.com'];
+      var dominioValido = partes.length > 1 && partes.every(function(parte){ return /^[a-z0-9-]{1,63}$/.test(parte) && parte.charAt(0) !== '-' && parte.charAt(parte.length - 1) !== '-'; }) && (genericos.indexOf(sufijo) !== -1 || paises.indexOf(sufijo) !== -1);
+      var correoPersonal = personales.some(function(proveedor){ return dominio === proveedor || dominio.endsWith('.' + proveedor); });
+      if (!dominioValido || correoPersonal){ mensaje.textContent = 'Usa un correo institucional de tu universidad o elige el resguardo de matrícula.'; correo.focus(); return; }
+    }
+    perfil.verificacionInquilino = { identidadAdjuntada:true, credencialAcademica:metodo, solvenciaAdjuntada:document.getElementById('solvencia').files.length > 0 };
+    try { sessionStorage.setItem('pm_onboarding_user', JSON.stringify(perfil)); }
+    catch(e){ mensaje.textContent = 'No se pudo guardar el estado de verificación en esta sesión.'; return; }
+    window.location.href = 'encuesta.html';
+  });
+})();
+</script>
+</body>
+</html>

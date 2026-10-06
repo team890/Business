@@ -77,8 +77,12 @@
   'use strict';
   var perfil = null;
   try { perfil = JSON.parse(sessionStorage.getItem('pm_onboarding_user') || 'null'); } catch(e){}
-  if (!perfil || !perfil.nombre || !perfil.telefono || !perfil.email){
+  if (!perfil || perfil.rol !== 'inquilino'){
     window.location.replace('main.html');
+    return;
+  }
+  if (!perfil.verificacionInquilino){
+    window.location.replace('verificacion-inquilino.html');
     return;
   }
   document.getElementById('nombre').textContent = perfil.nombre;

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#177b6b">
+<title>PisoMatch | Verificación de arrendatario</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { min-height: 100vh; background: #e9efec; color: #182924; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  .pagina { width: min(100%, 720px); min-height: 100vh; margin: 0 auto; padding: 24px 18px 40px; background: #f7faf8; }
+  header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .volver { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: #fff; color: #243c34; font-size: 23px; text-decoration: none; }
+  .marca { font-size: 18px; font-weight: 850; }
+  .marca span { color: #177b6b; }
+  h1 { margin-bottom: 7px; font-size: 24px; line-height: 1.25; }
+  .intro, .nota { color: #63776f; font-size: 13.5px; line-height: 1.5; }
+  .intro { margin-bottom: 20px; }
+  .seccion { padding: 18px 0; border-top: 1px solid #dfe8e3; }
+  .seccion h2 { margin-bottom: 7px; font-size: 15px; }
+  .seccion p { margin-bottom: 12px; color: #63776f; font-size: 13px; line-height: 1.45; }
+  label.campo { display: block; margin: 12px 0 6px; font-size: 12px; font-weight: 750; }
+  input, select { width: 100%; min-height: 46px; padding: 11px 12px; border: 1px solid #dce7e1; border-radius: 10px; background: #fff; color: #182924; font: inherit; font-size: 15px; }
+  input[type=file] { min-height: auto; font-size: 13px; }
+  .fila { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  video, #fotoCapturada { display: block; width: 100%; max-height: 340px; margin-top: 12px; border-radius: 12px; background: #17221e; object-fit: cover; }
+  #fotoCapturada { display: none; }
+  .camara-botones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .secundario { padding: 11px 14px; border: 1px solid #cfddd5; border-radius: 9px; background: #fff; color: #244138; font-weight: 750; cursor: pointer; }
+  .capturar { border-color: #177b6b; background: #177b6b; color: #fff; }
+  .nota { margin: 10px 0 16px; padding: 12px; border-radius: 9px; background: #edf3ef; font-size: 12px; }
+  .continuar { width: 100%; padding: 15px; border: 0; border-radius: 12px; color: #fff; background: #177b6b; font-size: 15px; font-weight: 800; cursor: pointer; }
+  #mensaje { min-height: 20px; padding-top: 10px; color: #b42318; font-size: 13px; }
+  @media (max-width: 520px) { .fila { grid-template-columns: 1fr; gap: 0; } }
+</style>
+</head>
+<body>
+<main class="pagina">
+  <header><a class="volver" href="main.html" aria-label="Volver al inicio">‹</a><div class="marca">Piso<span>Match</span></div></header>
+  <h1>Verificación de empresa y vivienda</h1>
+  <p class="intro">Acredita tu identidad, el derecho a ofrecer el inmueble y que la vivienda existe.</p>
+  <form id="formArrendatario">
+    <section class="seccion">
+      <h2>Datos de la empresa arrendataria</h2>
+      <div class="fila">
+        <div><label class="campo" for="empresa">Nombre legal o comercial</label><input id="empresa" required maxlength="100" autocomplete="organization"></div>
+        <div><label class="campo" for="cif">CIF / NIF de la empresa</label><input id="cif" required maxlength="20" autocomplete="off"></div>
+      </div>
+      <label class="campo" for="representante">Persona representante</label>
+      <input id="representante" required maxlength="100" autocomplete="name">
+      <label class="campo" for="direccionOferta">Dirección del piso o residencia ofertada</label>
+      <input id="direccionOferta" required maxlength="160" autocomplete="street-address">
+    </section>
+    <section class="seccion">
+      <h2>Identidad</h2>
+      <p>Documento de la persona representante: DNI, NIE o pasaporte.</p>
+      <div class="fila">
+        <div><label class="campo" for="tipoIdentidad">Tipo</label><select id="tipoIdentidad" required><option value="">Selecciona</option><option>DNI</option><option>NIE</option><option>Pasaporte</option></select></div>
+        <div><label class="campo" for="documentoIdentidad">Documento (PDF o imagen)</label><input id="documentoIdentidad" type="file" accept="image/*,.pdf" required></div>
+      </div>
+    </section>
+    <section class="seccion">
+      <h2>Derecho de alquiler</h2>
+      <p>Nota simple, recibo del IBI o contrato original que permita explícitamente el subarriendo.</p>
+      <label class="campo" for="tipoDerecho">Documento acreditativo</label>
+      <select id="tipoDerecho" required><option value="">Selecciona</option><option>Nota simple</option><option>Recibo del IBI</option><option>Contrato original con permiso explícito de subarriendo</option></select>
+      <label class="campo" for="documentoDerecho">Adjuntar documento</label>
+      <input id="documentoDerecho" type="file" accept="image/*,.pdf" required>
+    </section>
+    <section class="seccion">
+      <h2>Domicilio real</h2>
+      <p>Recibo reciente de luz, agua o internet a nombre de la empresa o representante, asociado a la dirección ofertada.</p>
+      <label class="campo" for="reciboDomicilio">Recibo de suministros</label>
+      <input id="reciboDomicilio" type="file" accept="image/*,.pdf" required>
+    </section>
+    <section class="seccion">
+      <h2>Prueba de veracidad en directo</h2>
+      <p>Activa la cámara y captura el piso ahora. No se permite elegir imágenes de la galería.</p>
+      <div class="camara-botones"><button class="secundario" type="button" id="iniciarCamara">Abrir cámara</button><button class="secundario capturar" type="button" id="capturar" disabled>Capturar foto</button></div>
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="canvas" class="oculto" hidden></canvas>
+      <img id="fotoCapturada" alt="Captura en directo del inmueble">
+      <p id="estadoCamara" aria-live="polite"></p>
+    </section>
+    <p class="nota">Esta demo solo comprueba que los documentos estén seleccionados. No los envía ni conserva. Para una verificación real hacen falta almacenamiento cifrado, backend y consentimiento informado.</p>
+    <button class="continuar" type="submit">Guardar verificación y ver mis inmuebles</button>
+    <div id="mensaje" role="alert"></div>
+  </form>
+</main>
+<script>
+(function(){
+  'use strict';
+  var perfil = null;
+  try { perfil = JSON.parse(sessionStorage.getItem('pm_onboarding_user') || 'null'); } catch(e){}
+  if (!perfil || perfil.rol !== 'arrendatario'){ window.location.replace('main.html'); return; }
+  var video = document.getElementById('video');
+  var canvas = document.getElementById('canvas');
+  var captura = document.getElementById('fotoCapturada');
+  var stream = null;
+  var fotoLista = false;
+  document.getElementById('iniciarCamara').addEventListener('click', async function(){
+    var estado = document.getElementById('estadoCamara');
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ estado.textContent = 'La cámara requiere HTTPS o localhost y un navegador compatible.'; return; }
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' } }, audio:false });
+      video.srcObject = stream;
+      await video.play();
+      document.getElementById('capturar').disabled = false;
+      estado.textContent = 'Cámara activa. Encuadra el piso y captura la foto.';
+    } catch(e){ estado.textContent = 'No se pudo acceder a la cámara. Revisa el permiso del navegador e inténtalo de nuevo.'; }
+  });
+  document.getElementById('capturar').addEventListener('click', function(){
+    if (!stream || !video.videoWidth) return;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    captura.src = canvas.toDataURL('image/jpeg', .88);
+    captura.style.display = 'block';
+    fotoLista = true;
+    stream.getTracks().forEach(function(track){ track.stop(); });
+    stream = null;
+    video.srcObject = null;
+    document.getElementById('capturar').disabled = true;
+    document.getElementById('estadoCamara').textContent = 'Foto capturada desde la cámara en directo.';
+  });
+  document.getElementById('formArrendatario').addEventListener('submit', function(e){
+    e.preventDefault();
+    var mensaje = document.getElementById('mensaje');
+    mensaje.textContent = '';
+    if (!this.reportValidity()) return;
+    if (!fotoLista){ mensaje.textContent = 'Captura una foto en directo desde la cámara antes de continuar.'; document.getElementById('iniciarCamara').focus(); return; }
+    perfil.arrendatario = {
+      empresa:document.getElementById('empresa').value.trim(),
+      representante:document.getElementById('representante').value.trim(),
+      direccionOferta:document.getElementById('direccionOferta').value.trim(),
+      requisitosCompletos:true
+    };
+    try { sessionStorage.setItem('pm_onboarding_user', JSON.stringify(perfil)); }
+    catch(e){ mensaje.textContent = 'No se pudo guardar el perfil en esta sesión.'; return; }
+    window.location.href = 'inmuebles.html';
+  });
+  window.addEventListener('pagehide', function(){ if (stream) stream.getTracks().forEach(function(track){ track.stop(); }); });
+})();
+</script>
+</body>
+</html>

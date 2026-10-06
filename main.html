@@ -20,6 +20,11 @@
   .avatares { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 20px; }
   .avatares button { width: 42px; height: 42px; border: 1px solid #e3e3ef; border-radius: 11px; background: #fff; font-size: 22px; cursor: pointer; }
   .avatares button.sel { border-color: #6d5efc; background: #f2f0ff; }
+  .roles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 18px; border: 0; }
+  .roles legend { grid-column: 1 / -1; margin-bottom: 8px; color: #5b5b82; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+  .rol-opcion { display: flex; align-items: center; gap: 9px; padding: 13px 12px; border: 1px solid #e3e3ef; border-radius: 11px; background: #fff; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .rol-opcion:has(input:checked) { border-color: #6d5efc; background: #f2f0ff; }
+  .rol-opcion input { width: 18px; height: 18px; accent-color: #6d5efc; }
   .continuar { width: 100%; padding: 15px; border: 0; border-radius: 12px; color: #fff; background: linear-gradient(90deg, #6d5efc, #ff5f8f); font-size: 15px; font-weight: 800; cursor: pointer; }
   #mensaje { min-height: 20px; padding-top: 10px; color: #d92d20; font-size: 13px; }
 </style>
@@ -32,7 +37,7 @@
   <form id="formRegistro" novalidate>
     <div class="campo">
       <label for="telefono">Teléfono móvil</label>
-      <input id="telefono" type="tel" inputmode="tel" autocomplete="tel" placeholder="600000000" maxlength="20" required>
+      <input id="telefono" type="tel" inputmode="tel" autocomplete="tel" placeholder="+000 123 45 67 89" maxlength="19" required>
     </div>
     <div class="campo">
       <label for="email">Correo electrónico</label>
@@ -55,7 +60,12 @@
       <button type="button" data-avatar="🐢" aria-label="Tortuga">🐢</button>
       <button type="button" data-avatar="🦋" aria-label="Mariposa">🦋</button>
     </div>
-    <button class="continuar" type="submit">Continuar a la encuesta</button>
+    <fieldset class="roles">
+      <legend>Elige tu perfil</legend>
+      <label class="rol-opcion"><input type="radio" name="rol" value="arrendatario" required>Arrendatario</label>
+      <label class="rol-opcion"><input type="radio" name="rol" value="inquilino" required>Inquilino</label>
+    </fieldset>
+    <button class="continuar" type="submit">Continuar</button>
     <div id="mensaje" role="alert"></div>
   </form>
 </main>
@@ -68,6 +78,15 @@
     email: document.getElementById('email'),
     nombre: document.getElementById('nombre')
   };
+  function sufijoCorreoValido(email){
+    var dominio = email.toLowerCase().split('@').pop();
+    var partes = dominio.split('.');
+    if (partes.length < 2 || partes.some(function(parte){ return !parte || parte.length > 63 || !/^[a-z0-9-]+$/.test(parte) || parte.charAt(0) === '-' || parte.charAt(parte.length - 1) === '-'; })) return false;
+    var sufijo = partes[partes.length - 1];
+    var genericos = 'com org net edu gov mil int info biz name pro aero coop museum jobs mobi travel cat asia tel post xxx online site tech store app dev cloud digital email agency company solutions world xyz art blog club live news social website academy education consulting design center services network international'.split(' ');
+    var paises = 'ad ae af ag ai al am ao aq ar as at au aw ax az ba bb bd be bf bg bh bi bj bl bm bn bo bq br bs bt bv bw by bz ca cc cd cf cg ch ci ck cl cm cn co cr cu cv cw cx cy cz de dj dk dm do dz ec ee eg eh er es et eu fi fj fk fm fo fr ga gb gd ge gf gg gh gi gl gm gn gp gq gr gs gt gu gw gy hk hm hn hr ht hu id ie il im in io iq ir is it je jm jo jp ke kg kh ki km kn kp kr kw ky kz la lb lc li lk lr ls lt lu lv ly ma mc md me mf mg mh mk ml mm mn mo mp mq mr ms mt mu mv mw mx my mz na nc ne nf ng ni nl no np nr nu nz om pa pe pf pg ph pk pl pm pn pr ps pt pw py qa re ro rs ru rw sa sb sc sd se sg sh si sj sk sl sm sn so sr ss st su sv sx sy sz tc td tf tg th tj tk tl tm tn to tr tt tv tw tz ua ug uk um us uy uz va vc ve vg vi vn vu wf ws ye yt za zm zw'.split(' ');
+    return genericos.indexOf(sufijo) !== -1 || paises.indexOf(sufijo) !== -1;
+  }
   try {
     var guardado = JSON.parse(sessionStorage.getItem('pm_onboarding_user') || 'null');
     if (guardado){
@@ -76,6 +95,8 @@
       campos.nombre.value = guardado.nombre || '';
       avatar = guardado.avatar || avatar;
       document.querySelectorAll('[data-avatar]').forEach(function(b){ b.classList.toggle('sel', b.dataset.avatar === avatar); });
+      var rolGuardado = document.querySelector('input[name="rol"][value="' + guardado.rol + '"]');
+      if (rolGuardado) rolGuardado.checked = true;
     }
   } catch(e){}
   document.getElementById('avatares').addEventListener('click', function(e){
@@ -91,15 +112,18 @@
     var telefono = campos.telefono.value.trim();
     var email = campos.email.value.trim();
     var nombre = campos.nombre.value.trim();
-    if (telefono.replace(/\D/g, '').length < 6){ mensaje.textContent = 'Introduce un teléfono válido.'; campos.telefono.focus(); return; }
+    var rol = document.querySelector('input[name="rol"]:checked');
+    if (!/^\+\s?\d[\d\s()-]{5,17}$/.test(telefono) || telefono.replace(/\D/g, '').length < 6){ mensaje.textContent = 'Introduce un teléfono válido que empiece por +.'; campos.telefono.focus(); return; }
     if (!campos.email.validity.valid){ mensaje.textContent = 'Introduce un correo electrónico válido.'; campos.email.focus(); return; }
+    if (!sufijoCorreoValido(email)){ mensaje.textContent = 'El correo debe terminar en un dominio con sufijo válido, como .com, .es o .edu.'; campos.email.focus(); return; }
     if (!nombre){ mensaje.textContent = 'Introduce tu nombre.'; campos.nombre.focus(); return; }
-    var perfil = { telefono: telefono, email: email, nombre: nombre, avatar: avatar, desde: Date.now() };
+    if (!rol){ mensaje.textContent = 'Elige Arrendatario o Inquilino para continuar.'; document.querySelector('.roles').scrollIntoView({ behavior:'smooth', block:'center' }); return; }
+    var perfil = { telefono: telefono, email: email, nombre: nombre, avatar: avatar, rol: rol.value, desde: Date.now() };
     try {
       sessionStorage.setItem('pm_onboarding_user', JSON.stringify(perfil));
       sessionStorage.removeItem('pm_matches_entry');
     } catch(e){ mensaje.textContent = 'No se pudieron guardar los datos en esta sesión.'; return; }
-    window.location.href = 'encuesta.html';
+    window.location.href = rol.value === 'arrendatario' ? 'verificacion-arrendatario.html' : 'verificacion-inquilino.html';
   });
 })();
 </script>

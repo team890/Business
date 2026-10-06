@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#177b6b">
+<title>PisoMatch | Mis inmuebles</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { min-height: 100vh; background: #e9efec; color: #182924; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  button, input, select, textarea { font: inherit; }
+  .app { min-height: 100vh; max-width: 980px; margin: 0 auto; background: #f7faf8; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #dfe8e3; background: #fff; }
+  .marca { display: flex; align-items: center; gap: 10px; font-weight: 850; font-size: 19px; }
+  .marca i { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: #177b6b; color: #fff; font-style: normal; }
+  .marca span { color: #177b6b; }
+  .perfil { display: flex; align-items: center; gap: 9px; color: #586c63; font-size: 13px; }
+  .perfil button { padding: 8px 10px; border: 1px solid #dfe8e3; border-radius: 8px; background: #fff; color: #30473e; cursor: pointer; }
+  main { padding: 22px 20px 40px; }
+  .bienvenida { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 19px; }
+  h1 { font-size: 25px; line-height: 1.2; }
+  .bienvenida p { margin-top: 5px; color: #708279; font-size: 13px; }
+  .tabs { display: flex; gap: 8px; border-bottom: 1px solid #dfe8e3; margin-bottom: 18px; }
+  .tabs button { padding: 11px 14px; border: 0; border-bottom: 2px solid transparent; background: none; color: #687b72; font-weight: 750; cursor: pointer; }
+  .tabs button.activa { border-bottom-color: #177b6b; color: #177b6b; }
+  .vista { display: none; }
+  .vista.activa { display: block; }
+  .columnas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .9fr); gap: 28px; align-items: start; }
+  h2 { margin-bottom: 14px; font-size: 17px; }
+  .form-inmueble { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .campo { display: flex; flex-direction: column; gap: 6px; }
+  .campo.ancho { grid-column: 1 / -1; }
+  .campo label { color: #52695e; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+  .campo input, .campo select, .campo textarea { width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid #dce7e1; border-radius: 9px; background: #fff; color: #182924; font-size: 14px; }
+  .campo textarea { min-height: 76px; resize: vertical; }
+  .accion { grid-column: 1 / -1; padding: 13px; border: 0; border-radius: 9px; background: #177b6b; color: #fff; font-weight: 800; cursor: pointer; }
+  .lista { display: grid; gap: 10px; }
+  .inmueble { padding: 14px; border: 1px solid #e0e9e4; border-radius: 10px; background: #fff; }
+  .inmueble-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .inmueble h3 { font-size: 15px; line-height: 1.35; }
+  .operacion { padding: 5px 8px; border-radius: 7px; background: #eaf4ef; color: #23705d; font-size: 10px; font-weight: 850; white-space: nowrap; text-transform: uppercase; }
+  .inmueble p { margin-top: 5px; color: #718179; font-size: 12px; line-height: 1.45; }
+  .precio { margin-top: 10px; color: #177b6b; font-size: 15px; font-weight: 850; }
+  .vacio { padding: 26px 18px; border: 1px dashed #cddbd3; border-radius: 10px; color: #718179; font-size: 13px; line-height: 1.5; text-align: center; }
+  .chat-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px; border: 1px solid #e0e9e4; border-radius: 10px; background: #fff; }
+  .chat-item div { min-width: 0; }
+  .chat-item strong { display: block; overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+  .chat-item span { display: block; overflow: hidden; margin-top: 4px; color: #718179; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+  .chat-item button { flex: 0 0 auto; padding: 8px 11px; border: 1px solid #dfe8e3; border-radius: 8px; background: #f7faf8; color: #30473e; font-weight: 750; cursor: pointer; }
+  #conversacion { margin-top: 18px; padding: 16px; border: 1px solid #e0e9e4; border-radius: 10px; background: #fff; }
+  #conversacion[hidden] { display: none; }
+  #mensajes { display: grid; gap: 8px; max-height: 320px; overflow-y: auto; margin-bottom: 12px; }
+  .mensaje { max-width: 85%; padding: 9px 11px; border-radius: 12px; background: #eff4f1; font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+  .mensaje.yo { justify-self: end; background: #177b6b; color: #fff; }
+  .enviar { display: flex; gap: 8px; }
+  .enviar input { flex: 1; min-width: 0; padding: 11px 12px; border: 1px solid #dce7e1; border-radius: 9px; }
+  .enviar button { padding: 0 14px; border: 0; border-radius: 9px; background: #177b6b; color: #fff; font-weight: 800; cursor: pointer; }
+  @media (max-width: 700px) { header { padding: 14px; } main { padding: 18px 14px 30px; } .columnas { grid-template-columns: 1fr; gap: 24px; } }
+  @media (max-width: 440px) { .perfil span { display: none; } .form-inmueble { grid-template-columns: 1fr; } .campo.ancho, .accion { grid-column: auto; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="marca"><i>⌂</i><div>Piso<span>Match</span></div></div>
+    <div class="perfil"><span id="nombreEmpresa"></span><button id="salir" type="button">Salir</button></div>
+  </header>
+  <main>
+    <div class="bienvenida"><div><h1>Panel de inmuebles</h1><p>Administra tus anuncios y conversaciones.</p></div></div>
+    <nav class="tabs" aria-label="Secciones"><button type="button" class="activa" data-vista="inmuebles">Inmuebles</button><button type="button" data-vista="chats">Chats</button></nav>
+    <section id="vista-inmuebles" class="vista activa">
+      <div class="columnas">
+        <div>
+          <h2>Publicar inmueble</h2>
+          <form class="form-inmueble" id="formInmueble">
+            <div class="campo ancho"><label for="titulo">Título del anuncio</label><input id="titulo" required maxlength="90" placeholder="Piso luminoso cerca del campus"></div>
+            <div class="campo"><label for="tipo">Tipo</label><select id="tipo"><option>Piso</option><option>Habitación</option><option>Residencia</option></select></div>
+            <div class="campo"><label for="operacion">Operación</label><select id="operacion"><option value="Alquiler">Alquiler</option><option value="Venta">Venta</option></select></div>
+            <div class="campo"><label for="ciudad">Ciudad</label><input id="ciudad" required maxlength="50"></div>
+            <div class="campo"><label for="precio">Precio (€)</label><input id="precio" type="number" min="1" step="1" required></div>
+            <div class="campo ancho"><label for="direccion">Dirección o zona</label><input id="direccion" required maxlength="120"></div>
+            <div class="campo ancho"><label for="descripcion">Descripción</label><textarea id="descripcion" maxlength="500"></textarea></div>
+            <button class="accion" type="submit">Añadir inmueble</button>
+          </form>
+        </div>
+        <div><h2>Mis pisos y residencias</h2><div class="lista" id="listaInmuebles"></div></div>
+      </div>
+    </section>
+    <section id="vista-chats" class="vista">
+      <h2>Conversaciones</h2>
+      <div class="lista" id="listaChats"></div>
+      <div id="conversacion" hidden>
+        <h2 id="tituloChat"></h2>
+        <div id="mensajes"></div>
+        <form class="enviar" id="formMensaje"><input id="textoMensaje" maxlength="500" placeholder="Escribe un mensaje..." autocomplete="off" required><button type="submit" aria-label="Enviar mensaje">Enviar</button></form>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+(function(){
+  'use strict';
+  var perfil = null;
+  try { perfil = JSON.parse(sessionStorage.getItem('pm_onboarding_user') || 'null'); } catch(e){}
+  if (!perfil || perfil.rol !== 'arrendatario' || !perfil.arrendatario || !perfil.arrendatario.requisitosCompletos){ window.location.replace('main.html'); return; }
+  document.getElementById('nombreEmpresa').textContent = perfil.arrendatario.empresa;
+  var propiedades = [];
+  var coincidencias = [];
+  var chats = {};
+  try {
+    propiedades = JSON.parse(localStorage.getItem('pm_landlord_properties') || '[]');
+    coincidencias = JSON.parse(localStorage.getItem('pm_matches') || '[]');
+    chats = JSON.parse(localStorage.getItem('pm_chats') || '{}');
+  } catch(e){}
+  var chatActual = null;
+  function guardarPropiedades(){ try { localStorage.setItem('pm_landlord_properties', JSON.stringify(propiedades)); } catch(e){} }
+  function escapar(texto){ return String(texto == null ? '' : texto).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function pintarPropiedades(){
+    var contenedor = document.getElementById('listaInmuebles');
+    if (!propiedades.length){ contenedor.innerHTML = '<div class="vacio">Todavía no tienes inmuebles publicados. Añade un piso, habitación o residencia.</div>'; return; }
+    contenedor.innerHTML = propiedades.map(function(item){
+      return '<article class="inmueble"><div class="inmueble-top"><h3>'+escapar(item.titulo)+'</h3><span class="operacion">'+escapar(item.operacion)+'</span></div><p>'+escapar(item.tipo)+' · '+escapar(item.ciudad)+' · '+escapar(item.direccion)+'</p><p>'+escapar(item.descripcion)+'</p><div class="precio">'+Number(item.precio).toLocaleString('es-ES')+' €'+(item.operacion === 'Alquiler' ? ' / mes' : '')+'</div></article>';
+    }).join('');
+  }
+  function pintarChats(){
+    var contenedor = document.getElementById('listaChats');
+    if (!coincidencias.length){ contenedor.innerHTML = '<div class="vacio">Cuando recibas consultas o se inicien conversaciones, aparecerán aquí.</div>'; return; }
+    contenedor.innerHTML = coincidencias.map(function(item){
+      var mensajes = chats[item.id] || [];
+      var ultimo = mensajes.length ? mensajes[mensajes.length - 1].texto : item.titulo;
+      return '<div class="chat-item"><div><strong>'+escapar(item.host || 'Consulta')+'</strong><span>'+escapar(ultimo)+'</span></div><button type="button" data-chat="'+escapar(item.id)+'">Abrir chat</button></div>';
+    }).join('');
+  }
+  function pintarConversacion(){
+    if (!chatActual) return;
+    var item = coincidencias.find(function(match){ return match.id === chatActual; });
+    if (!item) return;
+    document.getElementById('tituloChat').textContent = item.host || 'Conversación';
+    document.getElementById('mensajes').innerHTML = (chats[chatActual] || []).map(function(mensaje){
+      return '<div class="mensaje '+(mensaje.de === 'yo' ? 'yo' : '')+'">'+escapar(mensaje.texto)+'</div>';
+    }).join('') || '<div class="vacio">Inicia la conversación con un mensaje.</div>';
+    var lista = document.getElementById('mensajes');
+    lista.scrollTop = lista.scrollHeight;
+  }
+  document.getElementById('formInmueble').addEventListener('submit', function(e){
+    e.preventDefault();
+    if (!this.reportValidity()) return;
+    propiedades.unshift({ id:'arr-'+Date.now(), titulo:document.getElementById('titulo').value.trim(), tipo:document.getElementById('tipo').value, operacion:document.getElementById('operacion').value, ciudad:document.getElementById('ciudad').value.trim(), direccion:document.getElementById('direccion').value.trim(), precio:document.getElementById('precio').value, descripcion:document.getElementById('descripcion').value.trim() });
+    guardarPropiedades();
+    this.reset();
+    pintarPropiedades();
+  });
+  document.querySelectorAll('.tabs button').forEach(function(boton){
+    boton.addEventListener('click', function(){
+      document.querySelectorAll('.tabs button').forEach(function(otro){ otro.classList.toggle('activa', otro === boton); });
+      document.querySelectorAll('.vista').forEach(function(vista){ vista.classList.toggle('activa', vista.id === 'vista-' + boton.dataset.vista); });
+      if (boton.dataset.vista === 'chats') pintarChats();
+    });
+  });
+  document.getElementById('listaChats').addEventListener('click', function(e){
+    var boton = e.target.closest('[data-chat]');
+    if (!boton) return;
+    chatActual = boton.dataset.chat;
+    document.getElementById('conversacion').hidden = false;
+    pintarConversacion();
+  });
+  document.getElementById('formMensaje').addEventListener('submit', function(e){
+    e.preventDefault();
+    var input = document.getElementById('textoMensaje');
+    var texto = input.value.trim();
+    if (!texto || !chatActual) return;
+    if (!chats[chatActual]) chats[chatActual] = [];
+    chats[chatActual].push({ de:'yo', texto:texto, ts:Date.now(), leido:true });
+    try { localStorage.setItem('pm_chats', JSON.stringify(chats)); } catch(e){}
+    input.value = '';
+    pintarConversacion();
+    pintarChats();
+  });
+  document.getElementById('salir').addEventListener('click', function(){
+    sessionStorage.removeItem('pm_onboarding_user');
+    sessionStorage.removeItem('pm_matches_entry');
+    window.location.href = 'main.html';
+  });
+  pintarPropiedades();
+})();
+</script>
+</body>
+</html>

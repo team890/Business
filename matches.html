@@ -445,50 +445,6 @@
 <body>
 
 <!-- ============================================================
-     LOGIN
-     ============================================================ -->
-<div id="login">
-  <div class="logo">🏠</div>
-  <h1>Piso<span>Match</span></h1>
-  <p>Encuentra piso, residencia o compañeros<br>deslizando como en Tinder.</p>
-
-  <div class="campo">
-    <label for="inTelefono">Teléfono móvil</label>
-    <input id="inTelefono" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="600000000" maxlength="9">
-    <div style="margin-top:6px; font-size:11px; color:#7a7a94;">Número de teléfono sin +34</div>
-  </div>
-
-  <div class="campo">
-    <label for="inEmail">Correo electrónico</label>
-    <input id="inEmail" type="email" placeholder="ejemplo@correo.com" maxlength="60" autocomplete="email">
-  </div>
-
-  <div class="campo">
-    <label for="inNombre">Tu nombre</label>
-    <input id="inNombre" type="text" placeholder="Ej: Marta" maxlength="20">
-  </div>
-
-  <div class="campo">
-    <label>Elige tu avatar</label>
-  </div>
-  <div class="avatares" id="avatares">
-    <button type="button" data-av="🦊" class="sel">🦊</button>
-    <button type="button" data-av="🐼">🐼</button>
-    <button type="button" data-av="🐨">🐨</button>
-    <button type="button" data-av="🦁">🦁</button>
-    <button type="button" data-av="🐯">🐯</button>
-    <button type="button" data-av="🐸">🐸</button>
-    <button type="button" data-av="🐙">🐙</button>
-    <button type="button" data-av="🦄">🦄</button>
-    <button type="button" data-av="🐢">🐢</button>
-    <button type="button" data-av="🦋">🦋</button>
-  </div>
-
-  <button id="btnEntrar" type="button">Entrar en PisoMatch</button>
-  <div id="loginMsg"></div>
-</div>
-
-<!-- ============================================================
      APP
      ============================================================ -->
 <div id="app">
@@ -628,64 +584,6 @@
 </div>
 
 <div id="toast"></div>
-
-<!-- ============================================================
-     CUESTIONARIO DE CONVIVENCIA
-     ============================================================ -->
-<div id="modalEncuesta" role="dialog" aria-modal="true" aria-labelledby="encuestaTitulo">
-  <form class="encuesta-caja" id="formEncuesta">
-    <h2 id="encuestaTitulo">Antes de ver tus matches</h2>
-    <p>Cuéntanos cómo te gusta convivir. Responde las seis preguntas para continuar.</p>
-    <div class="encuesta-perfil">
-      <span>Nombre: <strong id="encuestaNombre"></strong></span>
-      <span>Teléfono: <strong id="encuestaTelefono"></strong></span>
-      <span>Correo: <strong id="encuestaEmail"></strong></span>
-    </div>
-
-    <fieldset class="encuesta-pregunta">
-      <legend>1. ¿Cómo prefieres gestionar las tareas del hogar?</legend>
-      <label class="encuesta-opcion"><input type="radio" name="tareas" value="A" required><span><strong>A.</strong> Prefiero un cuadrante estricto donde cada uno sepa qué día le toca limpiar qué.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="tareas" value="B"><span><strong>B.</strong> Limpiar sobre la marcha: si veo algo sucio lo limpio, sin tanta regla fija.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="tareas" value="C"><span><strong>C.</strong> Prefiero que contratemos un servicio de limpieza para las zonas comunes y repartir el coste.</span></label>
-    </fieldset>
-
-    <fieldset class="encuesta-pregunta">
-      <legend>2. Después de cocinar, ¿cuál es tu hábito habitual?</legend>
-      <label class="encuesta-opcion"><input type="radio" name="cocina" value="A" required><span><strong>A.</strong> Fregar los platos y recoger la cocina inmediatamente antes de sentarme a comer.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="cocina" value="B"><span><strong>B.</strong> Comer tranquilamente y recoger la cocina esa misma tarde o noche.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="cocina" value="C"><span><strong>C.</strong> Dejar los platos en el fregadero y lavarlos al día siguiente cuando tenga un hueco.</span></label>
-    </fieldset>
-
-    <fieldset class="encuesta-pregunta">
-      <legend>3. ¿Cómo prefieres organizar la compra del supermercado?</legend>
-      <label class="encuesta-opcion"><input type="radio" name="compra" value="A" required><span><strong>A.</strong> Economía comunista: compramos todo a medias y compartimos la comida.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="compra" value="B"><span><strong>B.</strong> Compartimos los básicos (aceite, sal, papel higiénico) y el resto cada uno lo suyo.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="compra" value="C"><span><strong>C.</strong> Totalmente separados: cada uno tiene su estantería en la nevera y compra sus propias cosas.</span></label>
-    </fieldset>
-
-    <fieldset class="encuesta-pregunta">
-      <legend>4. ¿Qué ambiente te imaginas en el salón un viernes o sábado por la noche?</legend>
-      <label class="encuesta-opcion"><input type="radio" name="ambiente" value="A" required><span><strong>A.</strong> Ambiente social: me gusta traer amigos, hacer previas o cenas grupales en casa.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="ambiente" value="B"><span><strong>B.</strong> Plan tranquilo: peli, sofá y pizza, quizás con uno o dos amigos como mucho.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="ambiente" value="C"><span><strong>C.</strong> El salón vacío: los fines de semana prefiero salir fuera o descansar en mi habitación.</span></label>
-    </fieldset>
-
-    <fieldset class="encuesta-pregunta">
-      <legend>5. ¿Cómo gestionamos las visitas (parejas, amigos de fuera que se quedan a dormir)?</legend>
-      <label class="encuesta-opcion"><input type="radio" name="visitas" value="A" required><span><strong>A.</strong> “Mi casa es tu casa”: libertad total para traer gente sin tener que avisar con antelación.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="visitas" value="B"><span><strong>B.</strong> Bienvenidos, pero avisando antes por el grupo de WhatsApp del piso por cortesía.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="visitas" value="C"><span><strong>C.</strong> Prefiero limitar las visitas a dormir; el piso es para los que pagamos el alquiler.</span></label>
-    </fieldset>
-
-    <fieldset class="encuesta-pregunta">
-      <legend>6. ¿Cómo sueles reaccionar si hay un problema de convivencia (por ejemplo, ruido excesivo)?</legend>
-      <label class="encuesta-opcion"><input type="radio" name="conflictos" value="A" required><span><strong>A.</strong> Lo digo al momento cara a cara, prefiero ser directo para solucionarlo rápido.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="conflictos" value="B"><span><strong>B.</strong> Envío un mensaje al grupo de WhatsApp del piso para dejar constancia sin confrontación directa.</span></label>
-      <label class="encuesta-opcion"><input type="radio" name="conflictos" value="C"><span><strong>C.</strong> Me lo guardo un tiempo y lo comento cuando estemos todos tranquilos tomando algo.</span></label>
-    </fieldset>
-    <button class="btn-grande" id="btnGuardarEncuesta" type="submit">Guardar respuestas y ver la app</button>
-  </form>
-</div>
 
 <script>
 (function(){
@@ -881,7 +779,6 @@
      ARRANQUE DE LA APP
      ========================================================= */
   function arrancarApp(){
-    $('#login').classList.add('oculto');
     $('#app').classList.add('visible');
 
     // Pintar avatar en el botón de perfil y en el modal
@@ -904,44 +801,6 @@
     pintarPila();
     pintarChats();
     actualizarPunto();
-    if (!usuarioActual.encuesta) mostrarEncuesta();
-  }
-
-  function mostrarEncuesta(){
-    var modalMatch = $('#modalMatch');
-    if (modalMatch.classList.contains('visible')){
-      var matchId = modalMatch.getAttribute('data-match');
-      for (var i=0;i<matches.length;i++){
-        if (matches[i].id === matchId){ matchPendiente = matches[i]; break; }
-      }
-      modalMatch.classList.remove('visible');
-    }
-    $('#encuestaNombre').textContent = usuarioActual.nombre;
-    $('#encuestaTelefono').textContent = usuarioActual.telefono;
-    $('#encuestaEmail').textContent = usuarioActual.email;
-    $('#modalEncuesta').classList.add('visible');
-  }
-
-  function guardarEncuesta(e){
-    e.preventDefault();
-    var form = $('#formEncuesta');
-    if (!form.reportValidity()) return;
-
-    var respuestas = {};
-    var datos = new FormData(form);
-    ['tareas','cocina','compra','ambiente','visitas','conflictos'].forEach(function(pregunta){
-      respuestas[pregunta] = datos.get(pregunta);
-    });
-    usuarioActual.encuesta = respuestas;
-    guardar('pm_user', usuarioActual);
-    $('#modalEncuesta').classList.remove('visible');
-    if (matchPendiente){
-      var itemPendiente = matchPendiente;
-      matchPendiente = null;
-      mostrarModalMatch(itemPendiente);
-    } else {
-      toast('¡Perfil de convivencia guardado!');
-    }
   }
 
   /* =========================================================
@@ -1191,7 +1050,7 @@
   }
 
   function mostrarModalMatch(item){
-    if (!usuarioActual || !usuarioActual.encuesta || $('#modalEncuesta').classList.contains('visible')){
+    if (!usuarioActual || !usuarioActual.encuesta){
       matchPendiente = item;
       return;
     }
@@ -1443,26 +1302,8 @@
      INICIALIZACIÓN
      ========================================================= */
   function init(){
-    initLogin();
     initSwipe();
     initPublicar();
-    $('#formEncuesta').addEventListener('submit', guardarEncuesta);
-
-    document.addEventListener('keydown', function(e){
-      if (!e.altKey || e.key !== 'ArrowLeft' || !$('#modalEncuesta').classList.contains('visible')) return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      $('#modalEncuesta').classList.remove('visible');
-      $('#app').classList.remove('visible');
-      $('#login').classList.remove('oculto');
-      $('#inTelefono').value = usuarioActual.telefono;
-      $('#inEmail').value = usuarioActual.email;
-      $('#inNombre').value = usuarioActual.nombre;
-      avatarSeleccionado = usuarioActual.avatar;
-      var avatares = $('#avatares').querySelectorAll('button');
-      for (var i=0;i<avatares.length;i++) avatares[i].classList.toggle('sel', avatares[i].dataset.av === avatarSeleccionado);
-      $('#inNombre').focus();
-    }, true);
 
     // Tabs
     var tabs = document.querySelectorAll('#tabbar button');
@@ -1534,7 +1375,7 @@
       window.location.replace('main.html');
       return;
     }
-    if (!perfil || !perfil.nombre || !perfil.telefono || !perfil.email){
+    if (!perfil || perfil.rol !== 'inquilino' || !perfil.nombre || !perfil.telefono || !perfil.email || !perfil.verificacionInquilino){
       window.location.replace('main.html');
       return;
     }
