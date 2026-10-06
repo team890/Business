@@ -226,6 +226,26 @@
   /* Chats */
   #vista-chats { overflow-y: auto; padding: 0 18px 24px; }
   #vista-chats h2 { font-size: 15px; font-weight: 800; margin: 6px 0 16px; }
+  #vista-convivencia { overflow-y: auto; padding: 0 16px 24px; gap: 14px; }
+  #vista-convivencia h2 { font-size: 16px; font-weight: 800; margin: 4px 0 10px; }
+  .conv-seccion { background: #fff; border: 1px solid #e8e8f2; border-radius: 12px; padding: 14px; }
+  .conv-seccion > p { color: #77778f; font-size: 12px; line-height: 1.45; margin-bottom: 10px; }
+  .conv-form { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .conv-form label { display: flex; flex-direction: column; gap: 5px; color: #5b5b82; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+  .conv-form input, .conv-form select { min-width: 0; padding: 10px; border: 1px solid #e4e4ef; border-radius: 9px; background: #fff; color: #15152b; font-size: 14px; }
+  .conv-form .ancho { grid-column: 1 / -1; }
+  .conv-form button, .conv-accion { min-height: 40px; padding: 9px 12px; border: 0; border-radius: 9px; background: #6d5efc; color: #fff; font-size: 12px; font-weight: 800; cursor: pointer; }
+  .conv-lista { display: flex; flex-direction: column; gap: 7px; margin-top: 10px; }
+  .conv-fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 10px; border-radius: 8px; background: #f6f7fb; font-size: 12px; }
+  .conv-fila small { color: #77778f; }
+  .conv-balance { display: grid; gap: 6px; margin-top: 10px; }
+  .conv-balance div { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; }
+  .conv-balance .positivo { color: #12805c; }
+  .conv-balance .negativo { color: #c63838; }
+  .conv-acciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .conv-acciones button.secundario { border: 1px solid #e4e4ef; background: #fff; color: #4a4a62; }
+  .conv-nota { padding: 9px 10px; border-radius: 8px; background: #f5f3ff; color: #5b5b82; font-size: 11px; line-height: 1.4; }
+  @media (max-width: 380px) { .conv-form { grid-template-columns: 1fr; } .conv-form .ancho { grid-column: auto; } }
 
   .match-item {
     display: flex; align-items: center; gap: 12px;
@@ -342,6 +362,12 @@
   .chat-titulo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .chat-titulo strong { font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .chat-titulo span { font-size: 11px; color: #7a7a94; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-match-acciones { display: flex; flex: 0 0 auto; gap: 6px; }
+  .chat-match-acciones button { width: 38px; height: 38px; border: 1px solid #e8e8f2; border-radius: 11px; background: #fff; font-size: 18px; cursor: pointer; }
+  #chatAceptar { color: #12805c; }
+  #chatRechazar { color: #c63838; }
+  .chat-match-acciones button:disabled { opacity: .45; cursor: not-allowed; }
+  .chat-match-acciones button[aria-pressed="true"] { background: #f1f1fa; border-color: #77778f; opacity: 1; }
 
   .chat-cuerpo {
     flex: 1; overflow-y: auto; padding: 16px 16px 8px;
@@ -539,12 +565,57 @@
       <h2>Tus matches y chats</h2>
       <div id="listaChats"></div>
     </section>
+
+    <section id="vista-convivencia" class="vista">
+      <h2>Convivencia en casa</h2>
+      <div class="conv-seccion">
+        <label class="conv-form"><span>Vivienda</span><select id="hogarSeleccionado" aria-label="Vivienda aceptada"></select></label>
+        <p id="preferenciaLimpieza" class="conv-nota"></p>
+      </div>
+      <div class="conv-seccion">
+        <h2>Convivientes</h2>
+        <form class="conv-form" id="formConviviente">
+          <label class="ancho">Nombre<input id="nombreConviviente" maxlength="40" required placeholder="Nombre de quien comparte la vivienda"></label>
+          <button class="ancho" type="submit">Añadir conviviente</button>
+        </form>
+        <div class="conv-lista" id="listaConvivientes"></div>
+      </div>
+      <div class="conv-seccion">
+        <h2>Bote común</h2>
+        <p>Registra compras compartidas. El coste se divide entre los convivientes y se calcula quién debe a quién.</p>
+        <form class="conv-form" id="formGasto">
+          <label>Compra<input id="gastoConcepto" maxlength="70" required placeholder="Productos de limpieza"></label>
+          <label>Importe (€)<input id="gastoImporte" type="number" min="0.01" step="0.01" required placeholder="18.50"></label>
+          <label>Pagó<select id="gastoPagador" required></select></label>
+          <button type="submit">Añadir gasto</button>
+        </form>
+        <div class="conv-lista" id="listaGastos"></div>
+        <h3 style="font-size:13px; margin-top:14px;">Balance de deudas</h3>
+        <div class="conv-balance" id="balanceGastos"></div>
+      </div>
+      <div class="conv-seccion">
+        <h2>Calendario de tareas</h2>
+        <p id="sugerenciaTareas" class="conv-nota"></p>
+        <form class="conv-form" id="formTarea">
+          <label>Tarea<input id="tareaNombre" maxlength="70" required placeholder="Limpiar cocina"></label>
+          <label>Día<select id="tareaDia" required><option value="1">Lunes</option><option value="2">Martes</option><option value="3">Miércoles</option><option value="4">Jueves</option><option value="5">Viernes</option><option value="6">Sábado</option><option value="0">Domingo</option></select></label>
+          <label>Responsable<select id="tareaResponsable" required></select></label>
+          <button type="submit">Programar tarea semanal</button>
+        </form>
+        <div class="conv-acciones">
+          <button class="conv-accion secundario" id="repartirTareas" type="button">Repartir equitativamente</button>
+          <button class="conv-accion secundario" id="activarAvisos" type="button">Activar recordatorios</button>
+        </div>
+        <div class="conv-lista" id="calendarioTareas"></div>
+      </div>
+    </section>
   </main>
 
   <nav id="tabbar">
     <button type="button" data-vista="descubrir" class="activa"><i class="ic">🔥</i>Descubrir</button>
     <button type="button" data-vista="publicar"><i class="ic">➕</i>Publicar</button>
     <button type="button" data-vista="chats"><i class="ic">💬</i>Chats<span class="punto" id="puntoNoLeidos" style="display:none">0</span></button>
+    <button type="button" data-vista="convivencia" id="tabConvivencia" style="display:none"><i class="ic">🏠</i>Hogar</button>
   </nav>
 </div>
 
@@ -553,13 +624,13 @@
      ============================================================ -->
 <div id="modalMatch">
   <div class="match-caja">
-    <h2>¡Es un Match!</h2>
+    <h2>¡Hay interés mutuo!</h2>
     <p>A ti y a <strong id="matchNombre">Lucía</strong> os interesa este sitio.</p>
     <div class="match-avatares">
       <div class="av" id="matchAv">🌿</div>
       <div class="av yo" id="matchYo">🦊</div>
     </div>
-    <button class="btn-grande" id="matchChat" type="button">Enviar mensaje</button>
+    <button class="btn-grande" id="matchChat" type="button">Revisar conversación</button>
     <button id="matchCerrar" type="button" style="width:100%; border:0; background:none; padding:13px; font-size:14px; font-weight:700; color:#7a7a94; cursor:pointer;">Seguir explorando</button>
   </div>
 </div>
@@ -574,6 +645,10 @@
     <div class="chat-titulo">
       <strong id="chatNombre">Lucía</strong>
       <span id="chatSub">Habitación</span>
+    </div>
+    <div class="chat-match-acciones">
+      <button id="chatAceptar" type="button" title="Aceptar definitivamente este match" aria-label="Aceptar match" aria-pressed="false">♥</button>
+      <button id="chatRechazar" type="button" title="Rechazar definitivamente este match" aria-label="Rechazar match" aria-pressed="false">✕</button>
     </div>
   </div>
   <div class="chat-cuerpo" id="chatCuerpo"></div>
@@ -681,8 +756,13 @@
      ========================================================= */
   var usuarioActual = null;
   var publicados = leer('pm_published', []);
-  var matches = leer('pm_matches', []);
+  var decisionesMatch = leer('pm_match_decisions', {});
+  var rechazados = leer('pm_rejected', []);
+  var matches = leer('pm_matches', []).filter(function(m){ return decisionesMatch[m.id] !== 'rechazado' && rechazados.indexOf(m.id) === -1; });
   var chats = leer('pm_chats', {});
+  var hogares = leer('pm_households', {});
+  var hogarActualId = leer('pm_active_household', null);
+  var recordatorioTimers = [];
   var pila = [];               // cartas pendientes
   var cartasDOM = {};          // id -> nodo
   var animando = false;
@@ -713,6 +793,144 @@
     var d = new Date(ts || Date.now());
     var h = d.getHours(), m = d.getMinutes();
     return (h<10?'0':'')+h+':'+(m<10?'0':'')+m;
+  }
+
+  function guardarHogares(){ guardar('pm_households', hogares); }
+
+  function coincidenciasAceptadas(){
+    return matches.filter(function(match){ return decisionesMatch[match.id] === 'aceptado'; });
+  }
+
+  function crearHogar(match){
+    if (!match || hogares[match.id]) return;
+    var preferencia = usuarioActual.encuesta && usuarioActual.encuesta.tareas;
+    var tareaInicial = preferencia === 'A' ? 'Limpieza de zonas comunes' : preferencia === 'B' ? 'Revisión de zonas comunes' : 'Coordinar limpieza de zonas comunes';
+    var diaInicial = preferencia === 'B' ? 3 : preferencia === 'C' ? 1 : 0;
+    hogares[match.id] = {
+      miembros:[usuarioActual.nombre],
+      gastos:[],
+      tareas:[{ id:'t-'+Date.now(), nombre:tareaInicial, dia:diaInicial, responsable:usuarioActual.nombre }],
+      preferenciaLimpieza:preferencia,
+      recordatorios:false
+    };
+    guardarHogares();
+  }
+
+  function activarAccesoConvivencia(matchId){
+    var match = matches.find(function(item){ return item.id === matchId; });
+    if (!match) return;
+    crearHogar(match);
+    hogarActualId = matchId;
+    guardar('pm_active_household', hogarActualId);
+    $('#tabConvivencia').style.display = 'flex';
+    pintarConvivencia();
+  }
+
+  function actualizarAccesoConvivencia(){
+    var aceptados = coincidenciasAceptadas();
+    var tab = $('#tabConvivencia');
+    if (!aceptados.length){ tab.style.display = 'none'; return; }
+    tab.style.display = 'flex';
+    aceptados.forEach(crearHogar);
+    if (!aceptados.some(function(match){ return match.id === hogarActualId; })) hogarActualId = aceptados[0].id;
+    guardar('pm_active_household', hogarActualId);
+    pintarConvivencia();
+  }
+
+  function hogarActivo(){ return hogares[hogarActualId] || null; }
+
+  function preferenciaLimpiezaTexto(preferencia){
+    if (preferencia === 'A') return 'Encuesta: prefieres un cuadrante estricto. Se ha creado un turno semanal editable.';
+    if (preferencia === 'B') return 'Encuesta: prefieres limpiar sobre la marcha. Se ha creado una revisión semanal que puedes cambiar.';
+    if (preferencia === 'C') return 'Encuesta: prefieres contratar limpieza. Se ha creado un recordatorio para coordinar el servicio.';
+    return 'Configura un calendario semanal para la vivienda.';
+  }
+
+  function importeEuro(valor){
+    return Number(valor || 0).toLocaleString('es-ES', { style:'currency', currency:'EUR' });
+  }
+
+  function pintarMiembros(hogar){
+    var options = hogar.miembros.map(function(nombre){ return '<option value="'+esc(nombre)+'">'+esc(nombre)+'</option>'; }).join('');
+    $('#gastoPagador').innerHTML = options;
+    $('#tareaResponsable').innerHTML = options;
+    $('#listaConvivientes').innerHTML = hogar.miembros.map(function(nombre){ return '<div class="conv-fila"><span>'+esc(nombre)+'</span><small>Conviviente</small></div>'; }).join('');
+  }
+
+  function pintarGastos(hogar){
+    $('#listaGastos').innerHTML = hogar.gastos.length ? hogar.gastos.slice().reverse().map(function(gasto){
+      return '<div class="conv-fila"><span>'+esc(gasto.concepto)+'<br><small>'+esc(gasto.pagador)+' pagó · '+new Date(gasto.fecha).toLocaleDateString('es-ES')+'</small></span><strong>'+importeEuro(gasto.importe)+'</strong></div>';
+    }).join('') : '<div class="conv-nota">Aún no hay compras en el bote común.</div>';
+
+    var saldos = {};
+    hogar.miembros.forEach(function(nombre){ saldos[nombre] = 0; });
+    hogar.gastos.forEach(function(gasto){
+      var participantes = gasto.participantes && gasto.participantes.length ? gasto.participantes : hogar.miembros;
+      if (!participantes.length) return;
+      var parte = Number(gasto.importe) / participantes.length;
+      participantes.forEach(function(nombre){ saldos[nombre] = (saldos[nombre] || 0) - parte; });
+      saldos[gasto.pagador] = (saldos[gasto.pagador] || 0) + Number(gasto.importe);
+    });
+
+    var acreedores = Object.keys(saldos).filter(function(nombre){ return saldos[nombre] > .009; }).map(function(nombre){ return { nombre:nombre, saldo:saldos[nombre] }; });
+    var deudores = Object.keys(saldos).filter(function(nombre){ return saldos[nombre] < -.009; }).map(function(nombre){ return { nombre:nombre, saldo:-saldos[nombre] }; });
+    var transferencias = [];
+    var i = 0, j = 0;
+    while (i < deudores.length && j < acreedores.length){
+      var cantidad = Math.min(deudores[i].saldo, acreedores[j].saldo);
+      transferencias.push('<div><span>'+esc(deudores[i].nombre)+' debe a '+esc(acreedores[j].nombre)+'</span><strong>'+importeEuro(cantidad)+'</strong></div>');
+      deudores[i].saldo -= cantidad;
+      acreedores[j].saldo -= cantidad;
+      if (deudores[i].saldo < .009) i++;
+      if (acreedores[j].saldo < .009) j++;
+    }
+    $('#balanceGastos').innerHTML = transferencias.length ? transferencias.join('') : '<div><span>Todo está saldado</span><strong>0,00 €</strong></div>';
+    Object.keys(saldos).forEach(function(nombre){
+      var saldo = saldos[nombre];
+      var clase = saldo > .009 ? 'positivo' : saldo < -.009 ? 'negativo' : '';
+      $('#balanceGastos').insertAdjacentHTML('beforeend', '<div class="'+clase+'"><span>Balance de '+esc(nombre)+'</span><strong>'+importeEuro(saldo)+'</strong></div>');
+    });
+  }
+
+  function pintarTareas(hogar){
+    var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    $('#calendarioTareas').innerHTML = hogar.tareas.slice().sort(function(a,b){ return Number(a.dia)-Number(b.dia); }).map(function(tarea){
+      return '<div class="conv-fila"><span>'+dias[Number(tarea.dia)]+': '+esc(tarea.nombre)+'<br><small>Responsable: '+esc(tarea.responsable)+'</small></span><strong>Semanal</strong></div>';
+    }).join('') || '<div class="conv-nota">Añade una tarea para completar el calendario de esta vivienda.</div>';
+    programarAvisos(hogar);
+  }
+
+  function pintarConvivencia(){
+    var aceptados = coincidenciasAceptadas();
+    if (!aceptados.length) return;
+    var selector = $('#hogarSeleccionado');
+    selector.innerHTML = aceptados.map(function(match){ return '<option value="'+esc(match.id)+'">'+esc(match.titulo || match.host)+'</option>'; }).join('');
+    selector.value = hogarActualId;
+    var hogar = hogarActivo();
+    if (!hogar) return;
+    $('#preferenciaLimpieza').textContent = preferenciaLimpiezaTexto(hogar.preferenciaLimpieza);
+    $('#sugerenciaTareas').textContent = preferenciaLimpiezaTexto(hogar.preferenciaLimpieza);
+    pintarMiembros(hogar);
+    pintarGastos(hogar);
+    pintarTareas(hogar);
+  }
+
+  function programarAvisos(hogar){
+    recordatorioTimers.forEach(clearTimeout);
+    recordatorioTimers = [];
+    if (!hogar.recordatorios || !('Notification' in window) || Notification.permission !== 'granted') return;
+    hogar.tareas.forEach(function(tarea){
+      var proximo = new Date();
+      proximo.setHours(9, 0, 0, 0);
+      var diferencia = (Number(tarea.dia) - proximo.getDay() + 7) % 7;
+      proximo.setDate(proximo.getDate() + diferencia);
+      if (proximo.getTime() <= Date.now()) proximo.setDate(proximo.getDate() + 7);
+      var temporizador = setTimeout(function(){
+        new Notification('Tarea del hogar: ' + tarea.nombre, { body:'Hoy le toca a ' + tarea.responsable + ' · ' + $('#hogarSeleccionado').selectedOptions[0].textContent });
+        programarAvisos(hogar);
+      }, proximo.getTime() - Date.now());
+      recordatorioTimers.push(temporizador);
+    });
   }
 
   /* =========================================================
@@ -789,6 +1007,7 @@
     var yaMatcheados = {};
     matches.forEach(function(m){ yaMatcheados[m.id] = true; });
 
+    rechazados.forEach(function(id){ yaMatcheados[id] = true; });
     pila = publicados.concat(EJEMPLOS).filter(function(it){
       return !yaMatcheados[it.id];
     });
@@ -801,6 +1020,7 @@
     pintarPila();
     pintarChats();
     actualizarPunto();
+    actualizarAccesoConvivencia();
   }
 
   /* =========================================================
@@ -1028,6 +1248,7 @@
      MATCHES Y CHATS
      ========================================================= */
   function crearMatch(item){
+    if (decisionesMatch[item.id] === 'rechazado' || rechazados.indexOf(item.id) !== -1) return;
     // Evitar duplicados
     for (var i=0;i<matches.length;i++) if (matches[i].id === item.id) return;
 
@@ -1128,6 +1349,7 @@
     av.style.background = 'linear-gradient(140deg,' + match.grad[0] + ',' + match.grad[1] + ')';
     $('#chatNombre').textContent = match.host;
     $('#chatSub').textContent = match.titulo + ' · ' + match.ciudad;
+    actualizarAccionesMatch();
 
     // Marcar como leídos
     var arr = chats[matchId] || [];
@@ -1147,10 +1369,52 @@
     actualizarPunto();
   }
 
+  function actualizarAccionesMatch(){
+    var decision = decisionesMatch[chatActualId] || '';
+    var aceptar = $('#chatAceptar');
+    var rechazar = $('#chatRechazar');
+    aceptar.disabled = !!decision;
+    rechazar.disabled = !!decision;
+    aceptar.setAttribute('aria-pressed', decision === 'aceptado' ? 'true' : 'false');
+    rechazar.setAttribute('aria-pressed', decision === 'rechazado' ? 'true' : 'false');
+    aceptar.title = decision ? 'Decisión definitiva: ' + decision : 'Aceptar definitivamente este match';
+    rechazar.title = decision ? 'Decisión definitiva: ' + decision : 'Rechazar definitivamente este match';
+  }
+
+  function decidirMatch(decision){
+    if (!chatActualId || decisionesMatch[chatActualId]) return;
+    var matchId = chatActualId;
+    if (decision === 'rechazado'){
+      if (!confirm('Rechazar este match es definitivo y la conversación se eliminará. ¿Quieres continuar?')) return;
+      decisionesMatch[matchId] = 'rechazado';
+      if (rechazados.indexOf(matchId) === -1) rechazados.push(matchId);
+      matches = matches.filter(function(match){ return match.id !== matchId; });
+      delete chats[matchId];
+      guardar('pm_matches', matches);
+      guardar('pm_rejected', rechazados);
+      guardar('pm_chats', chats);
+      guardar('pm_match_decisions', decisionesMatch);
+      $('#chat').classList.remove('visible');
+      chatActualId = null;
+      pintarChats();
+      actualizarPunto();
+      toast('Match rechazado definitivamente');
+      return;
+    }
+    if (!confirm('Aceptar este match es definitivo y habilitará las herramientas de convivencia. ¿Quieres continuar?')) return;
+    decisionesMatch[matchId] = 'aceptado';
+    guardar('pm_match_decisions', decisionesMatch);
+    actualizarAccionesMatch();
+    pintarChat();
+    activarAccesoConvivencia(matchId);
+    toast('Match aceptado definitivamente');
+  }
+
   function pintarChat(){
     if (!chatActualId) return;
     var arr = chats[chatActualId] || [];
-    var html = '<div class="chat-aviso">🔒 Match confirmado · Los mensajes se guardan</div>';
+    var estado = decisionesMatch[chatActualId] === 'aceptado' ? 'Match aceptado definitivamente · La convivencia está activa' : 'Match pendiente · Acepta o rechaza para decidir definitivamente';
+    var html = '<div class="chat-aviso">🔒 '+estado+'</div>';
     for (var i=0;i<arr.length;i++){
       var m = arr[i];
       var clase = m.de === 'yo' ? 'yo' : 'otro';
@@ -1220,8 +1484,11 @@
      ========================================================= */
   function cambiarVista(nombre){
     if (nombre === 'chats' && (!usuarioActual || !usuarioActual.encuesta)){
-      if (usuarioActual) mostrarEncuesta();
-      else toast('Completa tu perfil para ver tus matches');
+      toast('Completa tu perfil para ver tus matches');
+      return;
+    }
+    if (nombre === 'convivencia' && !coincidenciasAceptadas().length){
+      toast('Acepta un match para activar las herramientas de convivencia');
       return;
     }
     var tabs = document.querySelectorAll('#tabbar button');
@@ -1231,6 +1498,7 @@
     for (var j=0;j<vistas.length;j++) vistas[j].classList.toggle('activa', vistas[j].id === 'vista-' + nombre);
 
     if (nombre === 'chats') pintarChats();
+    if (nombre === 'convivencia') pintarConvivencia();
   }
 
   /* =========================================================
@@ -1329,7 +1597,10 @@
       var viejas = document.querySelectorAll('#pila .carta');
       for (var i=0;i<viejas.length;i++) viejas[i].remove();
       cartasDOM = {};
-      pila = publicados.concat(EJEMPLOS);
+      var noDisponibles = {};
+      matches.forEach(function(match){ noDisponibles[match.id] = true; });
+      rechazados.forEach(function(id){ noDisponibles[id] = true; });
+      pila = publicados.concat(EJEMPLOS).filter(function(item){ return !noDisponibles[item.id]; });
       pintarPila();
     });
 
@@ -1348,6 +1619,8 @@
 
     // Chat
     $('#chatVolver').addEventListener('click', cerrarChat);
+    $('#chatAceptar').addEventListener('click', function(){ decidirMatch('aceptado'); });
+    $('#chatRechazar').addEventListener('click', function(){ decidirMatch('rechazado'); });
     $('#chatEnviar').addEventListener('click', enviarMensaje);
     $('#chatInput').addEventListener('keydown', function(e){
       if (e.key === 'Enter'){ e.preventDefault(); enviarMensaje(); }
@@ -1359,6 +1632,63 @@
       if (!item) return;
       var id = item.getAttribute('data-id');
       if (id) abrirChat(id);
+    });
+
+    $('#hogarSeleccionado').addEventListener('change', function(){
+      hogarActualId = this.value;
+      crearHogar(matches.find(function(match){ return match.id === hogarActualId; }));
+      guardar('pm_active_household', hogarActualId);
+      pintarConvivencia();
+    });
+    $('#formConviviente').addEventListener('submit', function(e){
+      e.preventDefault();
+      var hogar = hogarActivo();
+      var input = $('#nombreConviviente');
+      var nombre = input.value.trim();
+      if (!hogar || !nombre || hogar.miembros.some(function(miembro){ return miembro.toLowerCase() === nombre.toLowerCase(); })) return;
+      hogar.miembros.push(nombre);
+      guardarHogares();
+      input.value = '';
+      pintarConvivencia();
+    });
+    $('#formGasto').addEventListener('submit', function(e){
+      e.preventDefault();
+      var form = this;
+      var hogar = hogarActivo();
+      if (!hogar || !form.reportValidity()) return;
+      hogar.gastos.push({ id:'g-'+Date.now(), concepto:$('#gastoConcepto').value.trim(), importe:Number($('#gastoImporte').value), pagador:$('#gastoPagador').value, participantes:hogar.miembros.slice(), fecha:Date.now() });
+      guardarHogares();
+      form.reset();
+      pintarConvivencia();
+    });
+    $('#formTarea').addEventListener('submit', function(e){
+      e.preventDefault();
+      var form = this;
+      var hogar = hogarActivo();
+      if (!hogar || !form.reportValidity()) return;
+      hogar.tareas.push({ id:'t-'+Date.now(), nombre:$('#tareaNombre').value.trim(), dia:Number($('#tareaDia').value), responsable:$('#tareaResponsable').value });
+      guardarHogares();
+      form.reset();
+      pintarConvivencia();
+    });
+    $('#repartirTareas').addEventListener('click', function(){
+      var hogar = hogarActivo();
+      if (!hogar || !hogar.miembros.length) return;
+      hogar.tareas.forEach(function(tarea, index){ tarea.responsable = hogar.miembros[index % hogar.miembros.length]; });
+      guardarHogares();
+      pintarConvivencia();
+      toast('Tareas repartidas equitativamente');
+    });
+    $('#activarAvisos').addEventListener('click', function(){
+      var hogar = hogarActivo();
+      if (!hogar || !('Notification' in window)){ toast('Este navegador no admite notificaciones'); return; }
+      Notification.requestPermission().then(function(permiso){
+        if (permiso !== 'granted'){ toast('No se concedió permiso para los recordatorios'); return; }
+        hogar.recordatorios = true;
+        guardarHogares();
+        pintarConvivencia();
+        toast('Recordatorios activados para esta vivienda');
+      });
     });
 
     // Cerrar sesión / cambiar de cuenta
