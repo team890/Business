@@ -1444,6 +1444,22 @@
     initPublicar();
     $('#formEncuesta').addEventListener('submit', guardarEncuesta);
 
+    document.addEventListener('keydown', function(e){
+      if (!e.altKey || e.key !== 'ArrowLeft' || !$('#modalEncuesta').classList.contains('visible')) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      $('#modalEncuesta').classList.remove('visible');
+      $('#app').classList.remove('visible');
+      $('#login').classList.remove('oculto');
+      $('#inTelefono').value = usuarioActual.telefono;
+      $('#inEmail').value = usuarioActual.email;
+      $('#inNombre').value = usuarioActual.nombre;
+      avatarSeleccionado = usuarioActual.avatar;
+      var avatares = $('#avatares').querySelectorAll('button');
+      for (var i=0;i<avatares.length;i++) avatares[i].classList.toggle('sel', avatares[i].dataset.av === avatarSeleccionado);
+      $('#inNombre').focus();
+    }, true);
+
     // Tabs
     var tabs = document.querySelectorAll('#tabbar button');
     for (var i=0;i<tabs.length;i++){
