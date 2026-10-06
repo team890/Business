@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6d5efc">
+<title>PisoMatch | Convivencia</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { min-height: 100vh; background: #e9ebf5; color: #15152b; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  .pagina { width: min(100%, 720px); min-height: 100vh; margin: 0 auto; padding: 24px 18px 40px; background: #f6f7fb; }
+  header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .volver { width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 12px; background: #fff; color: #34344d; font-size: 23px; text-decoration: none; }
+  .marca { font-weight: 850; font-size: 18px; }
+  .marca span { color: #6d5efc; }
+  h1 { font-size: 25px; line-height: 1.2; margin-bottom: 7px; }
+  .intro { color: #72728c; font-size: 14px; line-height: 1.5; margin-bottom: 18px; }
+  .perfil { display: flex; flex-wrap: wrap; gap: 7px 16px; padding: 12px 14px; margin-bottom: 18px; border-radius: 10px; background: #fff; color: #5b5b82; font-size: 12px; }
+  fieldset { border: 0; border-top: 1px solid #e4e4ef; padding: 17px 0; }
+  legend { width: 100%; padding-bottom: 9px; font-size: 14px; line-height: 1.4; font-weight: 800; }
+  .opcion { display: flex; gap: 10px; align-items: flex-start; padding: 11px 12px; margin-top: 7px; border: 1px solid #e5e5ef; border-radius: 10px; background: #fff; color: #4a4a62; font-size: 13px; line-height: 1.45; cursor: pointer; }
+  .opcion:has(input:checked) { border-color: #6d5efc; background: #f5f3ff; color: #292344; }
+  .opcion input { flex: 0 0 auto; width: 18px; height: 18px; margin: 0; accent-color: #6d5efc; }
+  .continuar { width: 100%; padding: 15px; margin-top: 12px; border: 0; border-radius: 12px; color: #fff; background: linear-gradient(90deg, #6d5efc, #ff5f8f); font-size: 15px; font-weight: 800; cursor: pointer; }
+  @media (min-width: 720px) { .pagina { padding: 30px 32px 44px; } }
+</style>
+</head>
+<body>
+<div class="pagina">
+  <header>
+    <a class="volver" href="main.html" aria-label="Volver a datos personales">‹</a>
+    <div class="marca">Piso<span>Match</span></div>
+  </header>
+  <h1>Cuestionario de convivencia</h1>
+  <p class="intro">Responde estas seis preguntas antes de ver los matches.</p>
+  <div class="perfil">
+    <span>Nombre: <strong id="nombre"></strong></span>
+    <span>Teléfono: <strong id="telefono"></strong></span>
+    <span>Correo: <strong id="email"></strong></span>
+  </div>
+  <form id="formEncuesta">
+    <fieldset><legend>1. ¿Cómo prefieres gestionar las tareas del hogar?</legend>
+      <label class="opcion"><input type="radio" name="tareas" value="A" required><span><strong>A.</strong> Prefiero un cuadrante estricto donde cada uno sepa qué día le toca limpiar qué.</span></label>
+      <label class="opcion"><input type="radio" name="tareas" value="B"><span><strong>B.</strong> Limpiar sobre la marcha: si veo algo sucio lo limpio, sin tanta regla fija.</span></label>
+      <label class="opcion"><input type="radio" name="tareas" value="C"><span><strong>C.</strong> Prefiero que contratemos un servicio de limpieza para las zonas comunes y repartir el coste.</span></label>
+    </fieldset>
+    <fieldset><legend>2. Después de cocinar, ¿cuál es tu hábito habitual?</legend>
+      <label class="opcion"><input type="radio" name="cocina" value="A" required><span><strong>A.</strong> Fregar los platos y recoger la cocina inmediatamente antes de sentarme a comer.</span></label>
+      <label class="opcion"><input type="radio" name="cocina" value="B"><span><strong>B.</strong> Comer tranquilamente y recoger la cocina esa misma tarde o noche.</span></label>
+      <label class="opcion"><input type="radio" name="cocina" value="C"><span><strong>C.</strong> Dejar los platos en el fregadero y lavarlos al día siguiente cuando tenga un hueco.</span></label>
+    </fieldset>
+    <fieldset><legend>3. ¿Cómo prefieres organizar la compra del supermercado?</legend>
+      <label class="opcion"><input type="radio" name="compra" value="A" required><span><strong>A.</strong> Economía comunista: compramos todo a medias y compartimos la comida.</span></label>
+      <label class="opcion"><input type="radio" name="compra" value="B"><span><strong>B.</strong> Compartimos los básicos (aceite, sal, papel higiénico) y el resto cada uno lo suyo.</span></label>
+      <label class="opcion"><input type="radio" name="compra" value="C"><span><strong>C.</strong> Totalmente separados: cada uno tiene su estantería en la nevera y compra sus propias cosas.</span></label>
+    </fieldset>
+    <fieldset><legend>4. ¿Qué ambiente te imaginas en el salón un viernes o sábado por la noche?</legend>
+      <label class="opcion"><input type="radio" name="ambiente" value="A" required><span><strong>A.</strong> Ambiente social: me gusta traer amigos, hacer previas o cenas grupales en casa.</span></label>
+      <label class="opcion"><input type="radio" name="ambiente" value="B"><span><strong>B.</strong> Plan tranquilo: peli, sofá y pizza, quizás con uno o dos amigos como mucho.</span></label>
+      <label class="opcion"><input type="radio" name="ambiente" value="C"><span><strong>C.</strong> El salón vacío: los fines de semana prefiero salir fuera o descansar en mi habitación.</span></label>
+    </fieldset>
+    <fieldset><legend>5. ¿Cómo gestionamos las visitas (parejas, amigos de fuera que se quedan a dormir)?</legend>
+      <label class="opcion"><input type="radio" name="visitas" value="A" required><span><strong>A.</strong> “Mi casa es tu casa”: libertad total para traer gente sin tener que avisar con antelación.</span></label>
+      <label class="opcion"><input type="radio" name="visitas" value="B"><span><strong>B.</strong> Bienvenidos, pero avisando antes por el grupo de WhatsApp del piso por cortesía.</span></label>
+      <label class="opcion"><input type="radio" name="visitas" value="C"><span><strong>C.</strong> Prefiero limitar las visitas a dormir; el piso es para los que pagamos el alquiler.</span></label>
+    </fieldset>
+    <fieldset><legend>6. ¿Cómo sueles reaccionar si hay un problema de convivencia (por ejemplo, ruido excesivo)?</legend>
+      <label class="opcion"><input type="radio" name="conflictos" value="A" required><span><strong>A.</strong> Lo digo al momento cara a cara, prefiero ser directo para solucionarlo rápido.</span></label>
+      <label class="opcion"><input type="radio" name="conflictos" value="B"><span><strong>B.</strong> Envío un mensaje al grupo de WhatsApp del piso para dejar constancia sin confrontación directa.</span></label>
+      <label class="opcion"><input type="radio" name="conflictos" value="C"><span><strong>C.</strong> Me lo guardo un tiempo y lo comento cuando estemos todos tranquilos tomando algo.</span></label>
+    </fieldset>
+    <button class="continuar" type="submit">Guardar y ver los matches</button>
+  </form>
+</div>
+<script>
+(function(){
+  'use strict';
+  var perfil = null;
+  try { perfil = JSON.parse(sessionStorage.getItem('pm_onboarding_user') || 'null'); } catch(e){}
+  if (!perfil || !perfil.nombre || !perfil.telefono || !perfil.email){
+    window.location.replace('main.html');
+    return;
+  }
+  document.getElementById('nombre').textContent = perfil.nombre;
+  document.getElementById('telefono').textContent = perfil.telefono;
+  document.getElementById('email').textContent = perfil.email;
+  document.getElementById('formEncuesta').addEventListener('submit', function(e){
+    e.preventDefault();
+    if (!this.reportValidity()) return;
+    var datos = new FormData(this);
+    perfil.encuesta = {};
+    ['tareas','cocina','compra','ambiente','visitas','conflictos'].forEach(function(pregunta){
+      perfil.encuesta[pregunta] = datos.get(pregunta);
+    });
+    try {
+      sessionStorage.setItem('pm_onboarding_user', JSON.stringify(perfil));
+      sessionStorage.setItem('pm_matches_entry', '1');
+    } catch(e){
+      window.alert('No se pudo guardar el perfil en esta sesión. Habilita el almacenamiento del navegador e inténtalo de nuevo.');
+      return;
+    }
+    window.location.href = 'matches.html';
+  });
+})();
+</script>
+</body>
+</html>
