@@ -406,6 +406,40 @@
     z-index: 9999; max-width: 88%; text-align: center;
   }
   #toast.visible { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ---------- CUESTIONARIO DE CONVIVENCIA ---------- */
+  #modalEncuesta {
+    position: fixed; inset: 0; z-index: 600;
+    display: none; align-items: center; justify-content: center;
+    padding: 16px; background: rgba(20,14,50,.72);
+  }
+  #modalEncuesta.visible { display: flex; }
+  .encuesta-caja {
+    width: 100%; max-width: 620px; max-height: calc(100dvh - 32px);
+    overflow-y: auto; overscroll-behavior: contain;
+    background: #fff; border-radius: 20px; padding: 24px;
+  }
+  .encuesta-caja h2 { font-size: 21px; line-height: 1.25; margin-bottom: 6px; }
+  .encuesta-caja > p { color: #7a7a94; font-size: 13.5px; line-height: 1.5; margin-bottom: 16px; }
+  .encuesta-perfil {
+    display: flex; flex-wrap: wrap; gap: 6px 16px;
+    padding: 11px 13px; margin-bottom: 20px;
+    background: #f6f7fb; border-radius: 10px; color: #5b5b82; font-size: 12px;
+  }
+  .encuesta-pregunta { border: 0; border-top: 1px solid #e8e8f2; padding: 16px 0; }
+  .encuesta-pregunta legend { width: 100%; padding: 0 0 10px; font-size: 14px; font-weight: 800; line-height: 1.4; }
+  .encuesta-opcion {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 12px; margin-top: 7px; border: 1px solid #e8e8f2;
+    border-radius: 10px; color: #4a4a62; font-size: 13px; line-height: 1.4; cursor: pointer;
+  }
+  .encuesta-opcion:has(input:checked) { border-color: #6d5efc; background: #f5f3ff; color: #292344; }
+  .encuesta-opcion input { flex: 0 0 auto; width: 18px; height: 18px; margin: 0; accent-color: #6d5efc; }
+  #btnGuardarEncuesta { margin-top: 14px; }
+  @media (max-width: 520px) {
+    #modalEncuesta { padding: 0; align-items: stretch; }
+    .encuesta-caja { max-height: 100dvh; border-radius: 0; padding: 22px 18px max(22px, env(safe-area-inset-bottom)); }
+  }
 </style>
 </head>
 <body>
@@ -594,6 +628,64 @@
 </div>
 
 <div id="toast"></div>
+
+<!-- ============================================================
+     CUESTIONARIO DE CONVIVENCIA
+     ============================================================ -->
+<div id="modalEncuesta" role="dialog" aria-modal="true" aria-labelledby="encuestaTitulo">
+  <form class="encuesta-caja" id="formEncuesta">
+    <h2 id="encuestaTitulo">Antes de ver tus matches</h2>
+    <p>Cuéntanos cómo te gusta convivir. Responde las seis preguntas para continuar.</p>
+    <div class="encuesta-perfil">
+      <span>Nombre: <strong id="encuestaNombre"></strong></span>
+      <span>Teléfono: <strong id="encuestaTelefono"></strong></span>
+      <span>Correo: <strong id="encuestaEmail"></strong></span>
+    </div>
+
+    <fieldset class="encuesta-pregunta">
+      <legend>1. ¿Cómo prefieres gestionar las tareas del hogar?</legend>
+      <label class="encuesta-opcion"><input type="radio" name="tareas" value="A" required><span><strong>A.</strong> Prefiero un cuadrante estricto donde cada uno sepa qué día le toca limpiar qué.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="tareas" value="B"><span><strong>B.</strong> Limpiar sobre la marcha: si veo algo sucio lo limpio, sin tanta regla fija.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="tareas" value="C"><span><strong>C.</strong> Prefiero que contratemos un servicio de limpieza para las zonas comunes y repartir el coste.</span></label>
+    </fieldset>
+
+    <fieldset class="encuesta-pregunta">
+      <legend>2. Después de cocinar, ¿cuál es tu hábito habitual?</legend>
+      <label class="encuesta-opcion"><input type="radio" name="cocina" value="A" required><span><strong>A.</strong> Fregar los platos y recoger la cocina inmediatamente antes de sentarme a comer.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="cocina" value="B"><span><strong>B.</strong> Comer tranquilamente y recoger la cocina esa misma tarde o noche.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="cocina" value="C"><span><strong>C.</strong> Dejar los platos en el fregadero y lavarlos al día siguiente cuando tenga un hueco.</span></label>
+    </fieldset>
+
+    <fieldset class="encuesta-pregunta">
+      <legend>3. ¿Cómo prefieres organizar la compra del supermercado?</legend>
+      <label class="encuesta-opcion"><input type="radio" name="compra" value="A" required><span><strong>A.</strong> Economía comunista: compramos todo a medias y compartimos la comida.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="compra" value="B"><span><strong>B.</strong> Compartimos los básicos (aceite, sal, papel higiénico) y el resto cada uno lo suyo.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="compra" value="C"><span><strong>C.</strong> Totalmente separados: cada uno tiene su estantería en la nevera y compra sus propias cosas.</span></label>
+    </fieldset>
+
+    <fieldset class="encuesta-pregunta">
+      <legend>4. ¿Qué ambiente te imaginas en el salón un viernes o sábado por la noche?</legend>
+      <label class="encuesta-opcion"><input type="radio" name="ambiente" value="A" required><span><strong>A.</strong> Ambiente social: me gusta traer amigos, hacer previas o cenas grupales en casa.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="ambiente" value="B"><span><strong>B.</strong> Plan tranquilo: peli, sofá y pizza, quizás con uno o dos amigos como mucho.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="ambiente" value="C"><span><strong>C.</strong> El salón vacío: los fines de semana prefiero salir fuera o descansar en mi habitación.</span></label>
+    </fieldset>
+
+    <fieldset class="encuesta-pregunta">
+      <legend>5. ¿Cómo gestionamos las visitas (parejas, amigos de fuera que se quedan a dormir)?</legend>
+      <label class="encuesta-opcion"><input type="radio" name="visitas" value="A" required><span><strong>A.</strong> “Mi casa es tu casa”: libertad total para traer gente sin tener que avisar con antelación.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="visitas" value="B"><span><strong>B.</strong> Bienvenidos, pero avisando antes por el grupo de WhatsApp del piso por cortesía.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="visitas" value="C"><span><strong>C.</strong> Prefiero limitar las visitas a dormir; el piso es para los que pagamos el alquiler.</span></label>
+    </fieldset>
+
+    <fieldset class="encuesta-pregunta">
+      <legend>6. ¿Cómo sueles reaccionar si hay un problema de convivencia (por ejemplo, ruido excesivo)?</legend>
+      <label class="encuesta-opcion"><input type="radio" name="conflictos" value="A" required><span><strong>A.</strong> Lo digo al momento cara a cara, prefiero ser directo para solucionarlo rápido.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="conflictos" value="B"><span><strong>B.</strong> Envío un mensaje al grupo de WhatsApp del piso para dejar constancia sin confrontación directa.</span></label>
+      <label class="encuesta-opcion"><input type="radio" name="conflictos" value="C"><span><strong>C.</strong> Me lo guardo un tiempo y lo comento cuando estemos todos tranquilos tomando algo.</span></label>
+    </fieldset>
+    <button class="btn-grande" id="btnGuardarEncuesta" type="submit">Guardar respuestas y ver la app</button>
+  </form>
+</div>
 
 <script>
 (function(){
@@ -815,6 +907,30 @@
     pintarPila();
     pintarChats();
     actualizarPunto();
+    if (!usuarioActual.encuesta) mostrarEncuesta();
+  }
+
+  function mostrarEncuesta(){
+    $('#encuestaNombre').textContent = usuarioActual.nombre;
+    $('#encuestaTelefono').textContent = usuarioActual.telefono;
+    $('#encuestaEmail').textContent = usuarioActual.email;
+    $('#modalEncuesta').classList.add('visible');
+  }
+
+  function guardarEncuesta(e){
+    e.preventDefault();
+    var form = $('#formEncuesta');
+    if (!form.reportValidity()) return;
+
+    var respuestas = {};
+    var datos = new FormData(form);
+    ['tareas','cocina','compra','ambiente','visitas','conflictos'].forEach(function(pregunta){
+      respuestas[pregunta] = datos.get(pregunta);
+    });
+    usuarioActual.encuesta = respuestas;
+    guardar('pm_user', usuarioActual);
+    $('#modalEncuesta').classList.remove('visible');
+    toast('¡Perfil de convivencia guardado!');
   }
 
   /* =========================================================
@@ -1229,6 +1345,11 @@
      NAVEGACIÓN ENTRE VISTAS
      ========================================================= */
   function cambiarVista(nombre){
+    if (nombre === 'chats' && (!usuarioActual || !usuarioActual.encuesta)){
+      if (usuarioActual) mostrarEncuesta();
+      else toast('Completa tu perfil para ver tus matches');
+      return;
+    }
     var tabs = document.querySelectorAll('#tabbar button');
     for (var i=0;i<tabs.length;i++) tabs[i].classList.toggle('activa', tabs[i].getAttribute('data-vista') === nombre);
 
@@ -1310,6 +1431,7 @@
     initLogin();
     initSwipe();
     initPublicar();
+    $('#formEncuesta').addEventListener('submit', guardarEncuesta);
 
     // Tabs
     var tabs = document.querySelectorAll('#tabbar button');
