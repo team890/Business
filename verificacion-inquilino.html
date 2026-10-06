@@ -28,6 +28,8 @@
   .oculto { display: none; }
   .privacidad { margin: 10px 0 16px; padding: 12px; border-radius: 9px; background: #efeff8; font-size: 12px; }
   .continuar { width: 100%; padding: 15px; border: 0; border-radius: 12px; color: #fff; background: linear-gradient(90deg, #6d5efc, #ff5f8f); font-size: 15px; font-weight: 800; cursor: pointer; }
+  .boton-ejemplo { margin: 0 0 8px; padding: 11px 14px; border: 1px solid #d9d5ff; border-radius: 9px; background: #f2f0ff; color: #5144c5; font-size: 13px; font-weight: 750; cursor: pointer; }
+  .ayuda-ejemplo { margin: 0 0 12px; color: #72728c; font-size: 12px; line-height: 1.45; }
   #mensaje { min-height: 20px; padding-top: 10px; color: #d92d20; font-size: 13px; }
 </style>
 </head>
@@ -37,6 +39,8 @@
   <h1>Verificación del inquilino</h1>
   <p class="intro">Completa la identidad y acredita que eres estudiante para continuar.</p>
   <form id="formVerificacion">
+    <button class="boton-ejemplo" type="button" id="autocompletarEjemplo">Autocompletar ejemplo de inquilino</button>
+    <p class="ayuda-ejemplo">Los documentos y justificantes se deben seleccionar manualmente; el ejemplo no adjunta archivos.</p>
     <section class="seccion">
       <h2>Identidad</h2>
       <p>Adjunta una imagen o PDF de tu documento. Solo se comprobará que has seleccionado un archivo en esta demo.</p>
@@ -88,6 +92,13 @@
       correo.required = porCorreo;
       matricula.required = !porCorreo;
     });
+  });
+  document.getElementById('autocompletarEjemplo').addEventListener('click', function(){
+    document.getElementById('tipoDocumento').value = 'DNI';
+    var opcionCorreo = document.querySelector('input[name="metodoAcademico"][value="correo"]');
+    opcionCorreo.checked = true;
+    opcionCorreo.dispatchEvent(new Event('change', { bubbles:true }));
+    correo.value = 'lucia.ejemplo@estudiant.upc.edu';
   });
   document.getElementById('formVerificacion').addEventListener('submit', function(e){
     e.preventDefault();

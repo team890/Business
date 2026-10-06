@@ -21,6 +21,7 @@
   .opcion { display: flex; gap: 10px; align-items: flex-start; padding: 11px 12px; margin-top: 7px; border: 1px solid #e5e5ef; border-radius: 10px; background: #fff; color: #4a4a62; font-size: 13px; line-height: 1.45; cursor: pointer; }
   .opcion:has(input:checked) { border-color: #6d5efc; background: #f5f3ff; color: #292344; }
   .opcion input { flex: 0 0 auto; width: 18px; height: 18px; margin: 0; accent-color: #6d5efc; }
+  .autocompletar { width: 100%; padding: 11px 14px; margin-bottom: 8px; border: 1px solid #d9d5ff; border-radius: 10px; background: #f2f0ff; color: #5144c5; font-size: 13px; font-weight: 750; cursor: pointer; }
   .continuar { width: 100%; padding: 15px; margin-top: 12px; border: 0; border-radius: 12px; color: #fff; background: linear-gradient(90deg, #6d5efc, #ff5f8f); font-size: 15px; font-weight: 800; cursor: pointer; }
   @media (min-width: 720px) { .pagina { padding: 30px 32px 44px; } }
 </style>
@@ -39,6 +40,7 @@
     <span>Correo: <strong id="email"></strong></span>
   </div>
   <form id="formEncuesta">
+    <button class="autocompletar" type="button" id="autocompletarEjemplo">Autocompletar encuesta con respuestas de ejemplo</button>
     <fieldset><legend>1. ¿Cómo prefieres gestionar las tareas del hogar?</legend>
       <label class="opcion"><input type="radio" name="tareas" value="A" required><span><strong>A.</strong> Prefiero un cuadrante estricto donde cada uno sepa qué día le toca limpiar qué.</span></label>
       <label class="opcion"><input type="radio" name="tareas" value="B"><span><strong>B.</strong> Limpiar sobre la marcha: si veo algo sucio lo limpio, sin tanta regla fija.</span></label>
@@ -88,7 +90,15 @@
   document.getElementById('nombre').textContent = perfil.nombre;
   document.getElementById('telefono').textContent = perfil.telefono;
   document.getElementById('email').textContent = perfil.email;
-  document.getElementById('formEncuesta').addEventListener('submit', function(e){
+  var formEncuesta = document.getElementById('formEncuesta');
+  document.getElementById('autocompletarEjemplo').addEventListener('click', function(){
+    var respuestas = { tareas:'B', cocina:'A', compra:'B', ambiente:'B', visitas:'B', conflictos:'A' };
+    Object.keys(respuestas).forEach(function(pregunta){
+      var opcion = formEncuesta.querySelector('input[name="' + pregunta + '"][value="' + respuestas[pregunta] + '"]');
+      if (opcion) opcion.checked = true;
+    });
+  });
+  formEncuesta.addEventListener('submit', function(e){
     e.preventDefault();
     if (!this.reportValidity()) return;
     var datos = new FormData(this);

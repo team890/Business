@@ -25,6 +25,8 @@
   .rol-opcion { display: flex; align-items: center; gap: 9px; padding: 13px 12px; border: 1px solid #e3e3ef; border-radius: 11px; background: #fff; font-size: 13px; font-weight: 700; cursor: pointer; }
   .rol-opcion:has(input:checked) { border-color: #6d5efc; background: #f2f0ff; }
   .rol-opcion input { width: 18px; height: 18px; accent-color: #6d5efc; }
+  .botones-ejemplo { display: grid; gap: 8px; margin: 0 0 16px; }
+  .boton-ejemplo { padding: 11px 12px; border: 1px solid #d9d5ff; border-radius: 10px; background: #f2f0ff; color: #5144c5; font-size: 13px; font-weight: 750; cursor: pointer; }
   .continuar { width: 100%; padding: 15px; border: 0; border-radius: 12px; color: #fff; background: linear-gradient(90deg, #6d5efc, #ff5f8f); font-size: 15px; font-weight: 800; cursor: pointer; }
   #mensaje { min-height: 20px; padding-top: 10px; color: #d92d20; font-size: 13px; }
 </style>
@@ -65,6 +67,10 @@
       <label class="rol-opcion"><input type="radio" name="rol" value="arrendatario" required>Arrendatario</label>
       <label class="rol-opcion"><input type="radio" name="rol" value="inquilino" required>Inquilino</label>
     </fieldset>
+    <div class="botones-ejemplo" aria-label="Autocompletar registro con ejemplos">
+      <button class="boton-ejemplo" type="button" data-ejemplo-registro="inquilino">Autocompletar ejemplo de inquilino</button>
+      <button class="boton-ejemplo" type="button" data-ejemplo-registro="arrendatario">Autocompletar ejemplo de arrendatario</button>
+    </div>
     <button class="continuar" type="submit">Continuar</button>
     <div id="mensaje" role="alert"></div>
   </form>
@@ -104,6 +110,18 @@
     if (!button) return;
     avatar = button.dataset.avatar;
     this.querySelectorAll('[data-avatar]').forEach(function(b){ b.classList.toggle('sel', b === button); });
+  });
+  document.querySelectorAll('[data-ejemplo-registro]').forEach(function(button){
+    button.addEventListener('click', function(){
+      var esInquilino = this.dataset.ejemploRegistro === 'inquilino';
+      campos.telefono.value = esInquilino ? '+34 600 123 456' : '+34 600 987 654';
+      campos.email.value = esInquilino ? 'lucia.ejemplo@example.com' : 'marcos.ejemplo@example.com';
+      campos.nombre.value = esInquilino ? 'Lucía Ejemplo' : 'Marcos Ejemplo';
+      var rol = document.querySelector('input[name="rol"][value="' + (esInquilino ? 'inquilino' : 'arrendatario') + '"]');
+      if (rol) rol.checked = true;
+      var avatarButton = document.querySelector('[data-avatar="' + (esInquilino ? '🐼' : '🦊') + '"]');
+      if (avatarButton) avatarButton.click();
+    });
   });
   document.getElementById('formRegistro').addEventListener('submit', function(e){
     e.preventDefault();

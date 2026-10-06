@@ -40,6 +40,8 @@
   <h1>Verificación de empresa y vivienda</h1>
   <p class="intro">Acredita tu identidad, el derecho a ofrecer el inmueble y que la vivienda existe.</p>
   <form id="formArrendatario">
+    <button class="secundario" type="button" id="autocompletarEjemplo">Autocompletar ejemplo de arrendatario</button>
+    <p class="nota">Los documentos y la foto del inmueble deben añadirse manualmente; el ejemplo solo rellena los datos del formulario.</p>
     <section class="seccion">
       <h2>Datos de la empresa arrendataria</h2>
       <div class="fila">
@@ -98,6 +100,14 @@
   var captura = document.getElementById('fotoCapturada');
   var stream = null;
   var fotoLista = false;
+  document.getElementById('autocompletarEjemplo').addEventListener('click', function(){
+    document.getElementById('empresa').value = 'Residencias Sol de Barcelona, S.L.';
+    document.getElementById('cif').value = 'B12345678';
+    document.getElementById('representante').value = 'Marcos Ejemplo';
+    document.getElementById('direccionOferta').value = 'Carrer de la Marina, 120, Barcelona';
+    document.getElementById('tipoIdentidad').value = 'DNI';
+    document.getElementById('tipoDerecho').value = 'Nota simple';
+  });
   document.getElementById('iniciarCamara').addEventListener('click', async function(){
     var estado = document.getElementById('estadoCamara');
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ estado.textContent = 'La cámara requiere HTTPS o localhost y un navegador compatible.'; return; }
