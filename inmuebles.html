@@ -49,6 +49,13 @@
   .chat-item button { flex: 0 0 auto; padding: 8px 11px; border: 1px solid #dfe8e3; border-radius: 8px; background: #f7faf8; color: #30473e; font-weight: 750; cursor: pointer; }
   #conversacion { margin-top: 18px; padding: 16px; border: 1px solid #e0e9e4; border-radius: 10px; background: #fff; }
   #conversacion[hidden] { display: none; }
+  .conversacion-cabecera { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .conversacion-cabecera h2 { margin: 5px 0 0; }
+  .acciones-match { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+  .acciones-match button { padding: 8px 10px; border: 1px solid #dfe8e3; border-radius: 8px; background: #fff; color: #30473e; font-size: 12px; font-weight: 800; cursor: pointer; }
+  .acciones-match #aceptarMatch[aria-pressed="true"] { border-color: #177b6b; background: #eaf4ef; color: #176b5b; }
+  .acciones-match #rechazarMatch[aria-pressed="true"] { border-color: #c74b4b; background: #fff0f0; color: #a52e2e; }
+  #estadoDecision { align-self: center; color: #718179; font-size: 11px; white-space: nowrap; }
   #mensajes { display: grid; gap: 8px; max-height: 320px; overflow-y: auto; margin-bottom: 12px; }
   .mensaje { max-width: 85%; padding: 9px 11px; border-radius: 12px; background: #eff4f1; font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
   .mensaje.yo { justify-self: end; background: #177b6b; color: #fff; }
@@ -90,7 +97,14 @@
       <h2>Conversaciones</h2>
       <div class="lista" id="listaChats"></div>
       <div id="conversacion" hidden>
-        <h2 id="tituloChat"></h2>
+        <div class="conversacion-cabecera">
+          <h2 id="tituloChat"></h2>
+          <div class="acciones-match">
+            <span id="estadoDecision">Pendiente</span>
+            <button id="aceptarMatch" type="button" aria-pressed="false">✓ Aceptar match</button>
+            <button id="rechazarMatch" type="button" aria-pressed="false">✕ Rechazar match</button>
+          </div>
+        </div>
         <div id="mensajes"></div>
         <form class="enviar" id="formMensaje"><input id="textoMensaje" maxlength="500" placeholder="Escribe un mensaje..." autocomplete="off" required><button type="submit" aria-label="Enviar mensaje">Enviar</button></form>
       </div>
@@ -107,10 +121,12 @@
   var propiedades = [];
   var coincidencias = [];
   var chats = {};
+  var decisiones = {};
   try {
     propiedades = JSON.parse(localStorage.getItem('pm_landlord_properties') || '[]');
     coincidencias = JSON.parse(localStorage.getItem('pm_matches') || '[]');
     chats = JSON.parse(localStorage.getItem('pm_chats') || '{}');
+    decisiones = JSON.parse(localStorage.getItem('pm_landlord_decisions') || '{}');
   } catch(e){}
   var chatActual = null;
   function guardarPropiedades(){ try { localStorage.setItem('pm_landlord_properties', JSON.stringify(propiedades)); } catch(e){} }
@@ -136,6 +152,10 @@
     var item = coincidencias.find(function(match){ return match.id === chatActual; });
     if (!item) return;
     document.getElementById('tituloChat').textContent = item.host || 'Conversación';
+    var decision = decisiones[chatActual] || '';
+    document.getElementById('estadoDecision').textContent = decision === 'aceptado' ? 'Match aceptado' : decision === 'rechazado' ? 'Match rechazado' : 'Pendiente';
+    document.getElementById('aceptarMatch').setAttribute('aria-pressed', decision === 'aceptado' ? 'true' : 'false');
+    document.getElementById('rechazarMatch').setAttribute('aria-pressed', decision === 'rechazado' ? 'true' : 'false');
     document.getElementById('mensajes').innerHTML = (chats[chatActual] || []).map(function(mensaje){
       return '<div class="mensaje '+(mensaje.de === 'yo' ? 'yo' : '')+'">'+escapar(mensaje.texto)+'</div>';
     }).join('') || '<div class="vacio">Inicia la conversación con un mensaje.</div>';
@@ -162,6 +182,18 @@
     if (!boton) return;
     chatActual = boton.dataset.chat;
     document.getElementById('conversacion').hidden = false;
+    pintarConversacion();
+  });
+  document.getElementById('aceptarMatch').addEventListener('click', function(){
+    if (!chatActual) return;
+    decisiones[chatActual] = 'aceptado';
+    try { localStorage.setItem('pm_landlord_decisions', JSON.stringify(decisiones)); } catch(e){}
+    pintarConversacion();
+  });
+  document.getElementById('rechazarMatch').addEventListener('click', function(){
+    if (!chatActual) return;
+    decisiones[chatActual] = 'rechazado';
+    try { localStorage.setItem('pm_landlord_decisions', JSON.stringify(decisiones)); } catch(e){}
     pintarConversacion();
   });
   document.getElementById('formMensaje').addEventListener('submit', function(e){
