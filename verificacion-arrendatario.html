@@ -41,7 +41,7 @@
   <p class="intro">Acredita tu identidad, el derecho a ofrecer el inmueble y que la vivienda existe.</p>
   <form id="formArrendatario">
     <button class="secundario" type="button" id="autocompletarEjemplo">Autocompletar ejemplo de arrendatario</button>
-    <p class="nota">Los documentos y la foto del inmueble deben añadirse manualmente; el ejemplo solo rellena los datos del formulario.</p>
+    <p class="nota">El ejemplo permite omitir los documentos adjuntos; la captura del inmueble con la cámara sigue siendo obligatoria.</p>
     <section class="seccion">
       <h2>Datos de la empresa arrendataria</h2>
       <div class="fila">
@@ -84,7 +84,7 @@
       <img id="fotoCapturada" alt="Captura en directo del inmueble">
       <p id="estadoCamara" aria-live="polite"></p>
     </section>
-    <p class="nota">Esta demo solo comprueba que los documentos estén seleccionados. No los envía ni conserva. Para una verificación real hacen falta almacenamiento cifrado, backend y consentimiento informado.</p>
+    <p class="nota">El botón de ejemplo permite continuar sin adjuntar documentos; sin usarlo, los documentos son obligatorios. La captura del inmueble con la cámara sigue siendo necesaria. Esta demo no envía ni conserva archivos.</p>
     <button class="continuar" type="submit">Guardar verificación y ver mis inmuebles</button>
     <div id="mensaje" role="alert"></div>
   </form>
@@ -100,7 +100,13 @@
   var captura = document.getElementById('fotoCapturada');
   var stream = null;
   var fotoLista = false;
+  var modoEjemplo = perfil.modoEjemplo === true;
+  var archivos = [document.getElementById('documentoIdentidad'), document.getElementById('documentoDerecho'), document.getElementById('reciboDomicilio')];
+  archivos.forEach(function(archivo){ archivo.required = !modoEjemplo; });
   document.getElementById('autocompletarEjemplo').addEventListener('click', function(){
+    modoEjemplo = true;
+    perfil.modoEjemplo = true;
+    archivos.forEach(function(archivo){ archivo.required = false; });
     document.getElementById('empresa').value = 'Residencias Sol de Barcelona, S.L.';
     document.getElementById('cif').value = 'B12345678';
     document.getElementById('representante').value = 'Marcos Ejemplo';
@@ -143,7 +149,9 @@
       empresa:document.getElementById('empresa').value.trim(),
       representante:document.getElementById('representante').value.trim(),
       direccionOferta:document.getElementById('direccionOferta').value.trim(),
-      requisitosCompletos:true
+      requisitosCompletos:true,
+      documentosAdjuntados:archivos.every(function(archivo){ return archivo.files.length > 0; }),
+      verificacionDeEjemplo:modoEjemplo
     };
     try { sessionStorage.setItem('pm_onboarding_user', JSON.stringify(perfil)); }
     catch(e){ mensaje.textContent = 'No se pudo guardar el perfil en esta sesión.'; return; }

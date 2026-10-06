@@ -34,6 +34,9 @@
   .campo input, .campo select, .campo textarea { width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid #dce7e1; border-radius: 9px; background: #fff; color: #182924; font-size: 14px; }
   .campo textarea { min-height: 76px; resize: vertical; }
   .accion { grid-column: 1 / -1; padding: 13px; border: 0; border-radius: 9px; background: #177b6b; color: #fff; font-weight: 800; cursor: pointer; }
+  .iconos { display: flex; flex-wrap: wrap; gap: 7px; }
+  .iconos button { width: 40px; height: 40px; border: 1px solid #dce7e1; border-radius: 9px; background: #fff; font-size: 20px; cursor: pointer; }
+  .iconos button.sel { border-color: #177b6b; background: #eaf4ef; }
   .lista { display: grid; gap: 10px; }
   .inmueble { padding: 14px; border: 1px solid #e0e9e4; border-radius: 10px; background: #fff; }
   .inmueble-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
@@ -62,8 +65,29 @@
   .enviar { display: flex; gap: 8px; }
   .enviar input { flex: 1; min-width: 0; padding: 11px 12px; border: 1px solid #dce7e1; border-radius: 9px; }
   .enviar button { padding: 0 14px; border: 0; border-radius: 9px; background: #177b6b; color: #fff; font-weight: 800; cursor: pointer; }
+  #vista-hogar { display: none; }
+  #vista-hogar.activa { display: grid; gap: 14px; }
+  .conv-seccion { padding: 14px; border: 1px solid #e0e9e4; border-radius: 10px; background: #fff; }
+  .conv-seccion > p { margin: 0 0 10px; color: #718179; font-size: 12px; line-height: 1.45; }
+  .conv-seccion h2 { margin: 0 0 10px; font-size: 16px; }
+  .conv-form { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .conv-form label { display: flex; flex-direction: column; gap: 5px; color: #52695e; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+  .conv-form input, .conv-form select { min-width: 0; padding: 10px; border: 1px solid #dce7e1; border-radius: 9px; background: #fff; color: #182924; font-size: 14px; }
+  .conv-form .ancho { grid-column: 1 / -1; }
+  .conv-form button, .conv-accion { min-height: 40px; padding: 9px 12px; border: 0; border-radius: 9px; background: #177b6b; color: #fff; font-size: 12px; font-weight: 800; cursor: pointer; }
+  .conv-lista { display: grid; gap: 7px; margin-top: 10px; }
+  .conv-fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 10px; border-radius: 8px; background: #f3f7f4; font-size: 12px; }
+  .conv-fila small { color: #718179; }
+  .conv-balance { display: grid; gap: 6px; margin-top: 10px; }
+  .conv-balance div { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; }
+  .conv-balance .positivo { color: #12805c; }
+  .conv-balance .negativo { color: #c63838; }
+  .conv-acciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .conv-acciones button.secundario { border: 1px solid #dce7e1; background: #fff; color: #30473e; }
+  .conv-nota { padding: 9px 10px; border-radius: 8px; background: #edf3ef; color: #52695e; font-size: 11px; line-height: 1.4; }
+  #hogarSeleccionado { width: 100%; padding: 10px; border: 1px solid #dce7e1; border-radius: 9px; background: #fff; color: #182924; }
   @media (max-width: 700px) { header { padding: 14px; } main { padding: 18px 14px 30px; } .columnas { grid-template-columns: 1fr; gap: 24px; } }
-  @media (max-width: 440px) { .perfil span { display: none; } .form-inmueble { grid-template-columns: 1fr; } .campo.ancho, .accion { grid-column: auto; } }
+  @media (max-width: 440px) { .perfil span { display: none; } .form-inmueble, .conv-form { grid-template-columns: 1fr; } .campo.ancho, .accion, .conv-form .ancho { grid-column: auto; } }
 </style>
 </head>
 <body>
@@ -73,21 +97,25 @@
     <div class="perfil"><span id="nombreEmpresa"></span><button id="salir" type="button">Salir</button></div>
   </header>
   <main>
-    <div class="bienvenida"><div><h1>Panel de inmuebles</h1><p>Administra tus anuncios y conversaciones.</p></div></div>
-    <nav class="tabs" aria-label="Secciones"><button type="button" class="activa" data-vista="inmuebles">Inmuebles</button><button type="button" data-vista="chats">Chats</button></nav>
+    <div class="bienvenida"><div><h1>Panel de inmuebles</h1><p>Publica viviendas, gestiona conversaciones y organiza el hogar con tus matches.</p></div></div>
+    <nav class="tabs" aria-label="Secciones"><button type="button" class="activa" data-vista="inmuebles">Inmuebles</button><button type="button" data-vista="chats">Chats</button><button type="button" id="tabHogar" data-vista="hogar" hidden>Hogar</button></nav>
     <section id="vista-inmuebles" class="vista activa">
       <div class="columnas">
         <div>
           <h2>Publicar inmueble</h2>
           <form class="form-inmueble" id="formInmueble">
             <div class="campo ancho"><label for="titulo">Título del anuncio</label><input id="titulo" required maxlength="90" placeholder="Piso luminoso cerca del campus"></div>
-            <div class="campo"><label for="tipo">Tipo</label><select id="tipo"><option>Piso</option><option>Habitación</option><option>Residencia</option></select></div>
+            <div class="campo"><label for="tipo">Tipo</label><select id="tipo"><option>Habitación</option><option>Piso completo</option><option>Residencia</option></select></div>
             <div class="campo"><label for="operacion">Operación</label><select id="operacion"><option value="Alquiler">Alquiler</option><option value="Venta">Venta</option></select></div>
             <div class="campo"><label for="ciudad">Ciudad</label><input id="ciudad" required maxlength="50"></div>
             <div class="campo"><label for="precio">Precio (€)</label><input id="precio" type="number" min="1" step="1" required></div>
             <div class="campo ancho"><label for="direccion">Dirección o zona</label><input id="direccion" required maxlength="120"></div>
-            <div class="campo ancho"><label for="descripcion">Descripción</label><textarea id="descripcion" maxlength="500"></textarea></div>
-            <button class="accion" type="submit">Añadir inmueble</button>
+            <div class="campo ancho"><label for="descripcion">Descripción</label><textarea id="descripcion" maxlength="280"></textarea></div>
+            <div class="campo ancho"><label for="etiquetas">Etiquetas (separadas por comas)</label><input id="etiquetas" maxlength="80" placeholder="Amueblado, Wifi, Balcón"></div>
+            <div class="campo ancho"><label>Elige un icono</label><div class="iconos" id="iconos">
+              <button type="button" data-ic="🏠" class="sel" aria-pressed="true">🏠</button><button type="button" data-ic="🌿" aria-pressed="false">🌿</button><button type="button" data-ic="🌊" aria-pressed="false">🌊</button><button type="button" data-ic="🪴" aria-pressed="false">🪴</button><button type="button" data-ic="☀️" aria-pressed="false">☀️</button><button type="button" data-ic="🎨" aria-pressed="false">🎨</button><button type="button" data-ic="🍊" aria-pressed="false">🍊</button><button type="button" data-ic="🎧" aria-pressed="false">🎧</button><button type="button" data-ic="🏢" aria-pressed="false">🏢</button><button type="button" data-ic="🎓" aria-pressed="false">🎓</button>
+            </div></div>
+            <button class="accion" type="submit">Publicar inmueble</button>
           </form>
         </div>
         <div><h2>Mis pisos y residencias</h2><div class="lista" id="listaInmuebles"></div></div>
@@ -109,6 +137,49 @@
         <form class="enviar" id="formMensaje"><input id="textoMensaje" maxlength="500" placeholder="Escribe un mensaje..." autocomplete="off" required><button type="submit" aria-label="Enviar mensaje">Enviar</button></form>
       </div>
     </section>
+    <section id="vista-hogar" class="vista">
+      <h2>Hogar</h2>
+      <div class="conv-seccion">
+        <label class="conv-form"><span>Vivienda</span><select id="hogarSeleccionado" aria-label="Vivienda aceptada"></select></label>
+        <p id="preferenciaLimpieza" class="conv-nota"></p>
+      </div>
+      <div class="conv-seccion">
+        <h2>Convivientes</h2>
+        <form class="conv-form" id="formConviviente">
+          <label class="ancho">Nombre<input id="nombreConviviente" maxlength="40" required placeholder="Nombre de quien comparte la vivienda"></label>
+          <button class="ancho" type="submit">Añadir conviviente</button>
+        </form>
+        <div class="conv-lista" id="listaConvivientes"></div>
+      </div>
+      <div class="conv-seccion">
+        <h2>Bote común</h2>
+        <p>Registra compras compartidas. El coste se divide entre los convivientes y se calcula quién debe a quién.</p>
+        <form class="conv-form" id="formGasto">
+          <label>Compra<input id="gastoConcepto" maxlength="70" required placeholder="Productos de limpieza"></label>
+          <label>Importe (€)<input id="gastoImporte" type="number" min="0.01" step="0.01" required placeholder="18.50"></label>
+          <label>Pagó<select id="gastoPagador" required></select></label>
+          <button type="submit">Añadir gasto</button>
+        </form>
+        <div class="conv-lista" id="listaGastos"></div>
+        <h3 style="font-size:13px; margin-top:14px;">Balance de deudas</h3>
+        <div class="conv-balance" id="balanceGastos"></div>
+      </div>
+      <div class="conv-seccion">
+        <h2>Calendario de tareas</h2>
+        <p id="sugerenciaTareas" class="conv-nota"></p>
+        <form class="conv-form" id="formTarea">
+          <label>Tarea<input id="tareaNombre" maxlength="70" required placeholder="Limpiar cocina"></label>
+          <label>Día<select id="tareaDia" required><option value="1">Lunes</option><option value="2">Martes</option><option value="3">Miércoles</option><option value="4">Jueves</option><option value="5">Viernes</option><option value="6">Sábado</option><option value="0">Domingo</option></select></label>
+          <label>Responsable<select id="tareaResponsable" required></select></label>
+          <button type="submit">Programar tarea semanal</button>
+        </form>
+        <div class="conv-acciones">
+          <button class="conv-accion secundario" id="repartirTareas" type="button">Repartir equitativamente</button>
+          <button class="conv-accion secundario" id="activarAvisos" type="button">Activar recordatorios</button>
+        </div>
+        <div class="conv-lista" id="calendarioTareas"></div>
+      </div>
+    </section>
   </main>
 </div>
 <script>
@@ -118,24 +189,65 @@
   try { perfil = JSON.parse(sessionStorage.getItem('pm_onboarding_user') || 'null'); } catch(e){}
   if (!perfil || perfil.rol !== 'arrendatario' || !perfil.arrendatario || !perfil.arrendatario.requisitosCompletos){ window.location.replace('main.html'); return; }
   document.getElementById('nombreEmpresa').textContent = perfil.arrendatario.empresa;
+  var GRADS = [['#a8edea','#fed6e3'],['#ffecd2','#fcb69f'],['#d4fc79','#96e6a1'],['#a1c4fd','#c2e9fb'],['#fbc2eb','#a6c1ee']];
+  var iconoSeleccionado = '🏠';
   var propiedades = [];
+  var publicaciones = [];
   var coincidencias = [];
   var chats = {};
   var decisiones = {};
+  var hogares = {};
+  var hogarActualId = null;
+  var recordatorioTimers = [];
   try {
     propiedades = JSON.parse(localStorage.getItem('pm_landlord_properties') || '[]');
+    publicaciones = JSON.parse(localStorage.getItem('pm_published') || '[]');
     coincidencias = JSON.parse(localStorage.getItem('pm_matches') || '[]');
     chats = JSON.parse(localStorage.getItem('pm_chats') || '{}');
     decisiones = JSON.parse(localStorage.getItem('pm_landlord_decisions') || '{}');
+    hogares = JSON.parse(localStorage.getItem('pm_households') || '{}');
+    hogarActualId = localStorage.getItem('pm_active_household');
   } catch(e){}
   var chatActual = null;
-  function guardarPropiedades(){ try { localStorage.setItem('pm_landlord_properties', JSON.stringify(propiedades)); } catch(e){} }
+  function guardarPropiedades(){
+    try {
+      localStorage.setItem('pm_landlord_properties', JSON.stringify(propiedades));
+      localStorage.setItem('pm_published', JSON.stringify(publicaciones));
+    } catch(e){}
+  }
+  function guardarDecisiones(){
+    try { localStorage.setItem('pm_landlord_decisions', JSON.stringify(decisiones)); } catch(e){}
+  }
+  function guardarHogares(){ try { localStorage.setItem('pm_households', JSON.stringify(hogares)); } catch(e){} }
   function escapar(texto){ return String(texto == null ? '' : texto).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function normalizarPropiedad(item){
+    var tipo = item.tipo === 'Piso' ? 'Piso completo' : item.tipo === 'Residencia de estudiantes' ? 'Residencia' : item.tipo;
+    return Object.assign({}, item, {
+      tipo:tipo || 'Habitación',
+      emoji:item.emoji || '🏠',
+      grad:item.grad || GRADS[0],
+      barrio:item.barrio || item.direccion || item.ciudad || '',
+      desc:item.desc || item.descripcion || '',
+      tags:Array.isArray(item.tags) ? item.tags : [],
+      extra:item.extra || '👤 Publicado por ' + perfil.arrendatario.empresa,
+      host:item.host || perfil.arrendatario.empresa,
+      esMio:true
+    });
+  }
+  propiedades = propiedades.map(normalizarPropiedad);
+  propiedades.forEach(function(propiedad){
+    var existente = publicaciones.findIndex(function(item){ return item.id === propiedad.id; });
+    if (existente === -1) publicaciones.unshift(propiedad);
+    else publicaciones[existente] = Object.assign({}, publicaciones[existente], propiedad);
+  });
+  coincidencias = coincidencias.filter(function(item){ return decisiones[item.id] !== 'rechazado'; });
+  guardarPropiedades();
   function pintarPropiedades(){
     var contenedor = document.getElementById('listaInmuebles');
     if (!propiedades.length){ contenedor.innerHTML = '<div class="vacio">Todavía no tienes inmuebles publicados. Añade un piso, habitación o residencia.</div>'; return; }
     contenedor.innerHTML = propiedades.map(function(item){
-      return '<article class="inmueble"><div class="inmueble-top"><h3>'+escapar(item.titulo)+'</h3><span class="operacion">'+escapar(item.operacion)+'</span></div><p>'+escapar(item.tipo)+' · '+escapar(item.ciudad)+' · '+escapar(item.direccion)+'</p><p>'+escapar(item.descripcion)+'</p><div class="precio">'+Number(item.precio).toLocaleString('es-ES')+' €'+(item.operacion === 'Alquiler' ? ' / mes' : '')+'</div></article>';
+      var tags = item.tags.length ? '<p>'+item.tags.map(escapar).join(' · ')+'</p>' : '';
+      return '<article class="inmueble"><div class="inmueble-top"><h3>'+escapar(item.emoji)+' '+escapar(item.titulo)+'</h3><span class="operacion">'+escapar(item.operacion || 'Alquiler')+'</span></div><p>'+escapar(item.tipo)+' · '+escapar(item.ciudad)+' · '+escapar(item.direccion || item.barrio)+'</p><p>'+escapar(item.descripcion || item.desc)+'</p>'+tags+'<div class="precio">'+Number(item.precio).toLocaleString('es-ES')+' €'+((item.operacion || 'Alquiler') === 'Alquiler' ? ' / mes' : '')+'</div></article>';
     }).join('');
   }
   function pintarChats(){
@@ -144,7 +256,8 @@
     contenedor.innerHTML = coincidencias.map(function(item){
       var mensajes = chats[item.id] || [];
       var ultimo = mensajes.length ? mensajes[mensajes.length - 1].texto : item.titulo;
-      return '<div class="chat-item"><div><strong>'+escapar(item.host || 'Consulta')+'</strong><span>'+escapar(ultimo)+'</span></div><button type="button" data-chat="'+escapar(item.id)+'">Abrir chat</button></div>';
+      var estado = decisiones[item.id] === 'aceptado' ? ' · Match aceptado' : '';
+      return '<div class="chat-item"><div><strong>'+escapar(item.host || 'Consulta')+'</strong><span>'+escapar(ultimo)+estado+'</span></div><button type="button" data-chat="'+escapar(item.id)+'">Abrir chat</button></div>';
     }).join('');
   }
   function pintarConversacion(){
@@ -156,18 +269,156 @@
     document.getElementById('estadoDecision').textContent = decision === 'aceptado' ? 'Match aceptado' : decision === 'rechazado' ? 'Match rechazado' : 'Pendiente';
     document.getElementById('aceptarMatch').setAttribute('aria-pressed', decision === 'aceptado' ? 'true' : 'false');
     document.getElementById('rechazarMatch').setAttribute('aria-pressed', decision === 'rechazado' ? 'true' : 'false');
+    document.getElementById('aceptarMatch').disabled = !!decision;
+    document.getElementById('rechazarMatch').disabled = !!decision;
     document.getElementById('mensajes').innerHTML = (chats[chatActual] || []).map(function(mensaje){
       return '<div class="mensaje '+(mensaje.de === 'yo' ? 'yo' : '')+'">'+escapar(mensaje.texto)+'</div>';
     }).join('') || '<div class="vacio">Inicia la conversación con un mensaje.</div>';
     var lista = document.getElementById('mensajes');
     lista.scrollTop = lista.scrollHeight;
   }
+  function matchesAceptados(){ return coincidencias.filter(function(item){ return decisiones[item.id] === 'aceptado'; }); }
+  function crearHogar(item){
+    var miembro = perfil.arrendatario.representante || perfil.arrendatario.empresa;
+    if (!item) return;
+    if (hogares[item.id]){
+      if (hogares[item.id].miembros.indexOf(miembro) === -1){
+        hogares[item.id].miembros.push(miembro);
+        guardarHogares();
+      }
+      return;
+    }
+    hogares[item.id] = {
+      miembros:[miembro],
+      gastos:[],
+      tareas:[{ id:'t-'+Date.now(), nombre:'Revisión de zonas comunes', dia:3, responsable:miembro }],
+      recordatorios:false
+    };
+    guardarHogares();
+  }
+  function hogarActivo(){ return hogares[hogarActualId] || null; }
+  function actualizarAccesoHogar(){
+    var aceptados = matchesAceptados();
+    var tab = document.getElementById('tabHogar');
+    tab.hidden = !aceptados.length;
+    if (!aceptados.length) return;
+    aceptados.forEach(crearHogar);
+    if (!aceptados.some(function(item){ return item.id === hogarActualId; })) hogarActualId = aceptados[0].id;
+    try { localStorage.setItem('pm_active_household', hogarActualId); } catch(e){}
+    pintarHogar();
+  }
+  function importeEuro(valor){ return Number(valor || 0).toLocaleString('es-ES', { style:'currency', currency:'EUR' }); }
+  function pintarMiembros(hogar){
+    var options = hogar.miembros.map(function(nombre){ return '<option value="'+escapar(nombre)+'">'+escapar(nombre)+'</option>'; }).join('');
+    document.getElementById('gastoPagador').innerHTML = options;
+    document.getElementById('tareaResponsable').innerHTML = options;
+    document.getElementById('listaConvivientes').innerHTML = hogar.miembros.map(function(nombre){ return '<div class="conv-fila"><span>'+escapar(nombre)+'</span><small>Conviviente</small></div>'; }).join('');
+  }
+  function pintarGastos(hogar){
+    document.getElementById('listaGastos').innerHTML = hogar.gastos.length ? hogar.gastos.slice().reverse().map(function(gasto){
+      return '<div class="conv-fila"><span>'+escapar(gasto.concepto)+'<br><small>'+escapar(gasto.pagador)+' pagó · '+new Date(gasto.fecha).toLocaleDateString('es-ES')+'</small></span><strong>'+importeEuro(gasto.importe)+'</strong></div>';
+    }).join('') : '<div class="conv-nota">Aún no hay compras en el bote común.</div>';
+    var saldos = {};
+    hogar.miembros.forEach(function(nombre){ saldos[nombre] = 0; });
+    hogar.gastos.forEach(function(gasto){
+      var participantes = gasto.participantes && gasto.participantes.length ? gasto.participantes : hogar.miembros;
+      if (!participantes.length) return;
+      var parte = Number(gasto.importe) / participantes.length;
+      participantes.forEach(function(nombre){ saldos[nombre] = (saldos[nombre] || 0) - parte; });
+      saldos[gasto.pagador] = (saldos[gasto.pagador] || 0) + Number(gasto.importe);
+    });
+    var acreedores = Object.keys(saldos).filter(function(nombre){ return saldos[nombre] > .009; }).map(function(nombre){ return { nombre:nombre, saldo:saldos[nombre] }; });
+    var deudores = Object.keys(saldos).filter(function(nombre){ return saldos[nombre] < -.009; }).map(function(nombre){ return { nombre:nombre, saldo:-saldos[nombre] }; });
+    var transferencias = [];
+    var i = 0, j = 0;
+    while (i < deudores.length && j < acreedores.length){
+      var cantidad = Math.min(deudores[i].saldo, acreedores[j].saldo);
+      transferencias.push('<div><span>'+escapar(deudores[i].nombre)+' debe a '+escapar(acreedores[j].nombre)+'</span><strong>'+importeEuro(cantidad)+'</strong></div>');
+      deudores[i].saldo -= cantidad;
+      acreedores[j].saldo -= cantidad;
+      if (deudores[i].saldo < .009) i++;
+      if (acreedores[j].saldo < .009) j++;
+    }
+    var balance = document.getElementById('balanceGastos');
+    balance.innerHTML = transferencias.length ? transferencias.join('') : '<div><span>Todo está saldado</span><strong>0,00 €</strong></div>';
+    Object.keys(saldos).forEach(function(nombre){
+      var saldo = saldos[nombre];
+      var clase = saldo > .009 ? 'positivo' : saldo < -.009 ? 'negativo' : '';
+      balance.insertAdjacentHTML('beforeend', '<div class="'+clase+'"><span>Balance de '+escapar(nombre)+'</span><strong>'+importeEuro(saldo)+'</strong></div>');
+    });
+  }
+  function programarAvisos(hogar){
+    recordatorioTimers.forEach(clearTimeout);
+    recordatorioTimers = [];
+    if (!hogar.recordatorios || !('Notification' in window) || Notification.permission !== 'granted') return;
+    hogar.tareas.forEach(function(tarea){
+      var proximo = new Date();
+      proximo.setHours(9, 0, 0, 0);
+      var diferencia = (Number(tarea.dia) - proximo.getDay() + 7) % 7;
+      proximo.setDate(proximo.getDate() + diferencia);
+      if (proximo.getTime() <= Date.now()) proximo.setDate(proximo.getDate() + 7);
+      recordatorioTimers.push(setTimeout(function(){
+        var vivienda = document.getElementById('hogarSeleccionado').selectedOptions[0];
+        new Notification('Tarea del hogar: ' + tarea.nombre, { body:'Hoy le toca a ' + tarea.responsable + (vivienda ? ' · ' + vivienda.textContent : '') });
+        programarAvisos(hogar);
+      }, proximo.getTime() - Date.now()));
+    });
+  }
+  function pintarHogar(){
+    var aceptados = matchesAceptados();
+    if (!aceptados.length) return;
+    var selector = document.getElementById('hogarSeleccionado');
+    selector.innerHTML = aceptados.map(function(item){ return '<option value="'+escapar(item.id)+'">'+escapar(item.titulo || item.host)+'</option>'; }).join('');
+    selector.value = hogarActualId;
+    var hogar = hogarActivo();
+    if (!hogar) return;
+    document.getElementById('preferenciaLimpieza').textContent = 'Configura un calendario semanal para esta vivienda.';
+    document.getElementById('sugerenciaTareas').textContent = 'Organiza las tareas de las zonas comunes con las personas convivientes.';
+    pintarMiembros(hogar);
+    pintarGastos(hogar);
+    var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    document.getElementById('calendarioTareas').innerHTML = hogar.tareas.slice().sort(function(a,b){ return Number(a.dia)-Number(b.dia); }).map(function(tarea){
+      return '<div class="conv-fila"><span>'+dias[Number(tarea.dia)]+': '+escapar(tarea.nombre)+'<br><small>Responsable: '+escapar(tarea.responsable)+'</small></span><strong>Semanal</strong></div>';
+    }).join('') || '<div class="conv-nota">Añade una tarea para completar el calendario de esta vivienda.</div>';
+    programarAvisos(hogar);
+  }
+  document.getElementById('iconos').addEventListener('click', function(e){
+    var boton = e.target.closest('[data-ic]');
+    if (!boton) return;
+    iconoSeleccionado = boton.dataset.ic;
+    this.querySelectorAll('[data-ic]').forEach(function(otro){
+      var seleccionado = otro === boton;
+      otro.classList.toggle('sel', seleccionado);
+      otro.setAttribute('aria-pressed', seleccionado ? 'true' : 'false');
+    });
+  });
   document.getElementById('formInmueble').addEventListener('submit', function(e){
     e.preventDefault();
     if (!this.reportValidity()) return;
-    propiedades.unshift({ id:'arr-'+Date.now(), titulo:document.getElementById('titulo').value.trim(), tipo:document.getElementById('tipo').value, operacion:document.getElementById('operacion').value, ciudad:document.getElementById('ciudad').value.trim(), direccion:document.getElementById('direccion').value.trim(), precio:document.getElementById('precio').value, descripcion:document.getElementById('descripcion').value.trim() });
+    var titulo = document.getElementById('titulo').value.trim();
+    var tipo = document.getElementById('tipo').value;
+    var operacion = document.getElementById('operacion').value;
+    var ciudad = document.getElementById('ciudad').value.trim();
+    var direccion = document.getElementById('direccion').value.trim();
+    var descripcion = document.getElementById('descripcion').value.trim() || 'Sin descripción por ahora.';
+    var tags = document.getElementById('etiquetas').value.trim().split(',').map(function(tag){ return tag.trim(); }).filter(Boolean).slice(0,4);
+    var nuevo = {
+      id:'arr-'+Date.now(), titulo:titulo, tipo:tipo, operacion:operacion, ciudad:ciudad, direccion:direccion,
+      precio:Number(document.getElementById('precio').value), descripcion:descripcion, emoji:iconoSeleccionado,
+      grad:GRADS[Math.floor(Math.random() * GRADS.length)], barrio:direccion, desc:descripcion,
+      tags:tags.length ? tags : ['Nuevo'], extra:'👤 Publicado por '+perfil.arrendatario.empresa,
+      host:perfil.arrendatario.empresa, esMio:true
+    };
+    propiedades.unshift(nuevo);
+    publicaciones.unshift(nuevo);
     guardarPropiedades();
     this.reset();
+    iconoSeleccionado = '🏠';
+    document.querySelectorAll('#iconos [data-ic]').forEach(function(boton){
+      var seleccionado = boton.dataset.ic === iconoSeleccionado;
+      boton.classList.toggle('sel', seleccionado);
+      boton.setAttribute('aria-pressed', seleccionado ? 'true' : 'false');
+    });
     pintarPropiedades();
   });
   document.querySelectorAll('.tabs button').forEach(function(boton){
@@ -175,6 +426,7 @@
       document.querySelectorAll('.tabs button').forEach(function(otro){ otro.classList.toggle('activa', otro === boton); });
       document.querySelectorAll('.vista').forEach(function(vista){ vista.classList.toggle('activa', vista.id === 'vista-' + boton.dataset.vista); });
       if (boton.dataset.vista === 'chats') pintarChats();
+      if (boton.dataset.vista === 'hogar') pintarHogar();
     });
   });
   document.getElementById('listaChats').addEventListener('click', function(e){
@@ -185,16 +437,73 @@
     pintarConversacion();
   });
   document.getElementById('aceptarMatch').addEventListener('click', function(){
-    if (!chatActual) return;
+    if (!chatActual || decisiones[chatActual]) return;
     decisiones[chatActual] = 'aceptado';
-    try { localStorage.setItem('pm_landlord_decisions', JSON.stringify(decisiones)); } catch(e){}
+    guardarDecisiones();
     pintarConversacion();
+    pintarChats();
+    actualizarAccesoHogar();
   });
   document.getElementById('rechazarMatch').addEventListener('click', function(){
-    if (!chatActual) return;
+    if (!chatActual || decisiones[chatActual]) return;
     decisiones[chatActual] = 'rechazado';
-    try { localStorage.setItem('pm_landlord_decisions', JSON.stringify(decisiones)); } catch(e){}
+    guardarDecisiones();
     pintarConversacion();
+    pintarChats();
+    actualizarAccesoHogar();
+  });
+  document.getElementById('hogarSeleccionado').addEventListener('change', function(){
+    hogarActualId = this.value;
+    try { localStorage.setItem('pm_active_household', hogarActualId); } catch(e){}
+    pintarHogar();
+  });
+  document.getElementById('formConviviente').addEventListener('submit', function(e){
+    e.preventDefault();
+    var hogar = hogarActivo();
+    var input = document.getElementById('nombreConviviente');
+    var nombre = input.value.trim();
+    if (!hogar || !nombre || hogar.miembros.some(function(miembro){ return miembro.toLowerCase() === nombre.toLowerCase(); })) return;
+    hogar.miembros.push(nombre);
+    guardarHogares();
+    input.value = '';
+    pintarHogar();
+  });
+  document.getElementById('formGasto').addEventListener('submit', function(e){
+    e.preventDefault();
+    var form = this;
+    var hogar = hogarActivo();
+    if (!hogar || !form.reportValidity()) return;
+    hogar.gastos.push({ id:'g-'+Date.now(), concepto:document.getElementById('gastoConcepto').value.trim(), importe:Number(document.getElementById('gastoImporte').value), pagador:document.getElementById('gastoPagador').value, participantes:hogar.miembros.slice(), fecha:Date.now() });
+    guardarHogares();
+    form.reset();
+    pintarHogar();
+  });
+  document.getElementById('formTarea').addEventListener('submit', function(e){
+    e.preventDefault();
+    var form = this;
+    var hogar = hogarActivo();
+    if (!hogar || !form.reportValidity()) return;
+    hogar.tareas.push({ id:'t-'+Date.now(), nombre:document.getElementById('tareaNombre').value.trim(), dia:Number(document.getElementById('tareaDia').value), responsable:document.getElementById('tareaResponsable').value });
+    guardarHogares();
+    form.reset();
+    pintarHogar();
+  });
+  document.getElementById('repartirTareas').addEventListener('click', function(){
+    var hogar = hogarActivo();
+    if (!hogar || !hogar.miembros.length) return;
+    hogar.tareas.forEach(function(tarea, index){ tarea.responsable = hogar.miembros[index % hogar.miembros.length]; });
+    guardarHogares();
+    pintarHogar();
+  });
+  document.getElementById('activarAvisos').addEventListener('click', function(){
+    var hogar = hogarActivo();
+    if (!hogar || !('Notification' in window)){ window.alert('Este navegador no admite notificaciones.'); return; }
+    Notification.requestPermission().then(function(permiso){
+      if (permiso !== 'granted'){ window.alert('No se concedió permiso para los recordatorios.'); return; }
+      hogar.recordatorios = true;
+      guardarHogares();
+      pintarHogar();
+    });
   });
   document.getElementById('formMensaje').addEventListener('submit', function(e){
     e.preventDefault();
@@ -214,6 +523,8 @@
     window.location.href = 'main.html';
   });
   pintarPropiedades();
+  pintarChats();
+  actualizarAccesoHogar();
 })();
 </script>
 </body>

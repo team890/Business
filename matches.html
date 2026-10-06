@@ -189,32 +189,6 @@
   #btnNo { color: #f04438; }
   #btnSi { color: #12b76a; }
 
-  /* Publicar */
-  #vista-publicar { overflow-y: auto; padding: 0 18px 24px; }
-  #vista-publicar h2 { font-size: 15px; font-weight: 800; margin: 6px 0 16px; }
-  .campo2 { margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px; }
-  .campo2 label {
-    font-size: 11px; font-weight: 800; color: #5b5b82;
-    text-transform: uppercase; letter-spacing: .5px;
-  }
-  .campo2 input, .campo2 select, .campo2 textarea {
-    width: 100%; padding: 12px 14px; border-radius: 14px;
-    border: 1px solid #e8e8f2; background: #fff;
-    color: #15152b; outline: none; font-size: 16px;
-  }
-  .campo2 textarea { resize: vertical; min-height: 84px; }
-  .campo2 input:focus, .campo2 select:focus, .campo2 textarea:focus { border-color: #6d5efc; }
-  .fila2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-  .iconos { display: flex; flex-wrap: wrap; gap: 8px; }
-  .iconos button {
-    width: 44px; height: 44px; border-radius: 13px;
-    border: 1.5px solid #e8e8f2; background: #fff;
-    font-size: 20px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .iconos button.sel { border-color: #6d5efc; background: #f2f0ff; }
-
   .btn-grande {
     width: 100%; padding: 15px; border: 0; border-radius: 15px;
     font-size: 15px; font-weight: 800; color: #fff;
@@ -493,7 +467,7 @@
         <div id="vacio">
           <div class="em">🎉</div>
           <h3>¡No hay más opciones!</h3>
-          <p>Vuelve más tarde o publica la tuya.</p>
+          <p>Vuelve más tarde para descubrir nuevas viviendas.</p>
           <button class="btn-grande" id="btnReiniciar" type="button" style="width: auto; padding: 13px 26px;">Volver a empezar</button>
         </div>
       </div>
@@ -501,63 +475,6 @@
         <button id="btnNo" type="button" aria-label="Pasar">✕</button>
         <button id="btnSi" type="button" aria-label="Me gusta">✓</button>
       </div>
-    </section>
-
-    <!-- PUBLICAR -->
-    <section id="vista-publicar" class="vista">
-      <h2>Publica tu piso, habitación o residencia</h2>
-      <form id="formPublicar" autocomplete="off">
-        <div class="campo2">
-          <label for="p-tipo">¿Qué publicas?</label>
-          <select id="p-tipo">
-            <option>Habitación</option>
-            <option>Piso completo</option>
-            <option>Residencia de estudiantes</option>
-          </select>
-        </div>
-        <div class="campo2">
-          <label for="p-titulo">Título</label>
-          <input id="p-titulo" type="text" placeholder="Ej: Habitación con balcón en Lavapiés" maxlength="60">
-        </div>
-        <div class="fila2">
-          <div class="campo2">
-            <label for="p-ciudad">Ciudad</label>
-            <input id="p-ciudad" type="text" placeholder="Madrid" maxlength="30">
-          </div>
-          <div class="campo2">
-            <label for="p-barrio">Barrio / zona</label>
-            <input id="p-barrio" type="text" placeholder="Malasaña" maxlength="30">
-          </div>
-        </div>
-        <div class="campo2">
-          <label for="p-precio">Precio (€ / mes)</label>
-          <input id="p-precio" type="number" min="0" step="10" placeholder="550" inputmode="numeric">
-        </div>
-        <div class="campo2">
-          <label for="p-desc">Descripción</label>
-          <textarea id="p-desc" placeholder="Cuéntanos cómo es..." maxlength="280"></textarea>
-        </div>
-        <div class="campo2">
-          <label for="p-tags">Etiquetas (separadas por comas)</label>
-          <input id="p-tags" type="text" placeholder="Amueblado, Wifi, Balcón" maxlength="80">
-        </div>
-        <div class="campo2">
-          <label>Elige un icono</label>
-          <div class="iconos" id="iconos">
-            <button type="button" data-ic="🏠" class="sel">🏠</button>
-            <button type="button" data-ic="🌿">🌿</button>
-            <button type="button" data-ic="🌊">🌊</button>
-            <button type="button" data-ic="🪴">🪴</button>
-            <button type="button" data-ic="☀️">☀️</button>
-            <button type="button" data-ic="🎨">🎨</button>
-            <button type="button" data-ic="🍊">🍊</button>
-            <button type="button" data-ic="🎧">🎧</button>
-            <button type="button" data-ic="🏢">🏢</button>
-            <button type="button" data-ic="🎓">🎓</button>
-          </div>
-        </div>
-        <button class="btn-grande" type="submit">Publicar</button>
-      </form>
     </section>
 
     <!-- CHATS -->
@@ -613,7 +530,6 @@
 
   <nav id="tabbar">
     <button type="button" data-vista="descubrir" class="activa"><i class="ic">🔥</i>Descubrir</button>
-    <button type="button" data-vista="publicar"><i class="ic">➕</i>Publicar</button>
     <button type="button" data-vista="chats"><i class="ic">💬</i>Chats<span class="punto" id="puntoNoLeidos" style="display:none">0</span></button>
     <button type="button" data-vista="convivencia" id="tabConvivencia" style="display:none"><i class="ic">🏠</i>Hogar</button>
   </nav>
@@ -746,11 +662,6 @@
       host:'Resi Benimaclet' }
   ];
 
-  var GRADS = [
-    ['#a8edea','#fed6e3'], ['#ffecd2','#fcb69f'], ['#d4fc79','#96e6a1'],
-    ['#a1c4fd','#c2e9fb'], ['#fbc2eb','#a6c1ee'], ['#fdcbf1','#e6dee9']
-  ];
-
   /* =========================================================
      ESTADO
      ========================================================= */
@@ -766,7 +677,6 @@
   var pila = [];               // cartas pendientes
   var cartasDOM = {};          // id -> nodo
   var animando = false;
-  var iconoSeleccionado = '🏠';
   var avatarSeleccionado = '🦊';
   var chatActualId = null;
   var matchPendiente = null;
@@ -794,6 +704,9 @@
     var h = d.getHours(), m = d.getMinutes();
     return (h<10?'0':'')+h+':'+(m<10?'0':'')+m;
   }
+  function precioTexto(item){
+    return Number(item.precio).toLocaleString('es-ES')+'€'+(item.operacion === 'Venta' ? '' : '/mes');
+  }
 
   function guardarHogares(){ guardar('pm_households', hogares); }
 
@@ -802,7 +715,14 @@
   }
 
   function crearHogar(match){
-    if (!match || hogares[match.id]) return;
+    if (!match) return;
+    if (hogares[match.id]){
+      if (hogares[match.id].miembros.indexOf(usuarioActual.nombre) === -1){
+        hogares[match.id].miembros.push(usuarioActual.nombre);
+        guardarHogares();
+      }
+      return;
+    }
     var preferencia = usuarioActual.encuesta && usuarioActual.encuesta.tareas;
     var tareaInicial = preferencia === 'A' ? 'Limpieza de zonas comunes' : preferencia === 'B' ? 'Revisión de zonas comunes' : 'Coordinar limpieza de zonas comunes';
     var diaInicial = preferencia === 'B' ? 3 : preferencia === 'C' ? 1 : 0;
@@ -1045,7 +965,7 @@
       '<div class="cuerpo">' +
         '<div class="fila">' +
           '<h3>'+esc(item.titulo)+'</h3>' +
-          '<div class="precio">'+item.precio+'€<small>/mes</small></div>' +
+          '<div class="precio">'+esc(precioTexto(item))+'</div>' +
         '</div>' +
         '<p class="ubicacion">📍 '+esc(item.barrio)+', '+esc(item.ciudad)+'</p>' +
         '<p class="desc">'+esc(item.desc)+'</p>' +
@@ -1314,7 +1234,7 @@
           '</div>' +
           '<div class="match-info">' +
             '<strong>'+esc(m.host)+'</strong>' +
-            '<span>'+esc(m.titulo)+' · '+m.precio+'€/mes</span>' +
+            '<span>'+esc(m.titulo)+' · '+esc(precioTexto(m))+'</span>' +
             '<span class="preview">'+esc(preview)+'</span>' +
           '</div>' +
           '<button class="mini" type="button">Chat</button>' +
@@ -1502,76 +1422,10 @@
   }
 
   /* =========================================================
-     PUBLICAR
-     ========================================================= */
-  function initPublicar(){
-    // Selección de icono
-    var cont = $('#iconos');
-    cont.addEventListener('click', function(e){
-      var b = e.target.closest('button');
-      if (!b || !b.dataset.ic) return;
-      iconoSeleccionado = b.dataset.ic;
-      var todos = cont.querySelectorAll('button');
-      for (var i=0;i<todos.length;i++) todos[i].classList.toggle('sel', todos[i] === b);
-    });
-
-    // Envío del formulario
-    $('#formPublicar').addEventListener('submit', function(e){
-      e.preventDefault();
-      if (!usuarioActual){ toast('Inicia sesión primero'); return; }
-
-      var titulo = $('#p-titulo').value.trim();
-      var ciudad = $('#p-ciudad').value.trim();
-      var barrio = $('#p-barrio').value.trim() || ciudad;
-      var precio = parseInt($('#p-precio').value, 10);
-      var tipo = $('#p-tipo').value;
-      var desc = $('#p-desc').value.trim() || 'Sin descripción por ahora.';
-      var tagsRaw = $('#p-tags').value.trim();
-
-      if (!titulo){ toast('Falta el título'); $('#p-titulo').focus(); return; }
-      if (!ciudad){ toast('Falta la ciudad'); $('#p-ciudad').focus(); return; }
-      if (!precio || precio <= 0){ toast('Falta el precio'); $('#p-precio').focus(); return; }
-
-      var nuevo = {
-        id: 'u' + Date.now(),
-        tipo: tipo,
-        emoji: iconoSeleccionado,
-        grad: GRADS[Math.floor(Math.random() * GRADS.length)],
-        titulo: titulo,
-        precio: precio,
-        ciudad: ciudad,
-        barrio: barrio,
-        desc: desc,
-        tags: tagsRaw ? tagsRaw.split(',').map(function(s){ return s.trim(); }).filter(Boolean).slice(0,4) : ['Nuevo'],
-        extra: '👤 Publicado por ' + usuarioActual.nombre,
-        host: usuarioActual.nombre,
-        esMio: true
-      };
-
-      publicados.unshift(nuevo);
-      guardar('pm_published', publicados);
-
-      // Añadir a la pila
-      pila.unshift(nuevo);
-      pintarPila();
-
-      // Reset form
-      e.target.reset();
-      iconoSeleccionado = '🏠';
-      var iconos = cont.querySelectorAll('button');
-      for (var i=0;i<iconos.length;i++) iconos[i].classList.toggle('sel', iconos[i].dataset.ic === '🏠');
-
-      cambiarVista('descubrir');
-      toast('¡Publicación añadida! 🎉');
-    });
-  }
-
-  /* =========================================================
      INICIALIZACIÓN
      ========================================================= */
   function init(){
     initSwipe();
-    initPublicar();
 
     // Tabs
     var tabs = document.querySelectorAll('#tabbar button');

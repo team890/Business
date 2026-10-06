@@ -79,6 +79,7 @@
 (function(){
   'use strict';
   var avatar = '🦊';
+  var modoEjemplo = false;
   var campos = {
     telefono: document.getElementById('telefono'),
     email: document.getElementById('email'),
@@ -114,6 +115,7 @@
   document.querySelectorAll('[data-ejemplo-registro]').forEach(function(button){
     button.addEventListener('click', function(){
       var esInquilino = this.dataset.ejemploRegistro === 'inquilino';
+      modoEjemplo = true;
       campos.telefono.value = esInquilino ? '+34 600 123 456' : '+34 600 987 654';
       campos.email.value = esInquilino ? 'lucia.ejemplo@example.com' : 'marcos.ejemplo@example.com';
       campos.nombre.value = esInquilino ? 'Lucía Ejemplo' : 'Marcos Ejemplo';
@@ -137,6 +139,7 @@
     if (!nombre){ mensaje.textContent = 'Introduce tu nombre.'; campos.nombre.focus(); return; }
     if (!rol){ mensaje.textContent = 'Elige Arrendatario o Inquilino para continuar.'; document.querySelector('.roles').scrollIntoView({ behavior:'smooth', block:'center' }); return; }
     var perfil = { telefono: telefono, email: email, nombre: nombre, avatar: avatar, rol: rol.value, desde: Date.now() };
+    if (modoEjemplo) perfil.modoEjemplo = true;
     try {
       sessionStorage.setItem('pm_onboarding_user', JSON.stringify(perfil));
       sessionStorage.removeItem('pm_matches_entry');

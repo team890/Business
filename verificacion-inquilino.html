@@ -40,7 +40,7 @@
   <p class="intro">Completa la identidad y acredita que eres estudiante para continuar.</p>
   <form id="formVerificacion">
     <button class="boton-ejemplo" type="button" id="autocompletarEjemplo">Autocompletar ejemplo de inquilino</button>
-    <p class="ayuda-ejemplo">Los documentos y justificantes se deben seleccionar manualmente; el ejemplo no adjunta archivos.</p>
+    <p class="ayuda-ejemplo">El ejemplo permite continuar sin adjuntar documentos. Sin usarlo, el documento de identidad y la credencial académica seleccionada son obligatorios.</p>
     <section class="seccion">
       <h2>Identidad</h2>
       <p>Adjunta una imagen o PDF de tu documento. Solo se comprobará que has seleccionado un archivo en esta demo.</p>
@@ -84,16 +84,23 @@
   if (!perfil || perfil.rol !== 'inquilino'){ window.location.replace('main.html'); return; }
   var correo = document.getElementById('correoUniversidad');
   var matricula = document.getElementById('resguardoMatricula');
+  var documentoIdentidad = document.getElementById('documentoIdentidad');
+  var modoEjemplo = perfil.modoEjemplo === true;
+  documentoIdentidad.required = !modoEjemplo;
   document.querySelectorAll('input[name="metodoAcademico"]').forEach(function(opcion){
     opcion.addEventListener('change', function(){
       var porCorreo = this.value === 'correo';
       document.getElementById('bloqueCorreo').classList.toggle('oculto', !porCorreo);
       document.getElementById('bloqueMatricula').classList.toggle('oculto', porCorreo);
       correo.required = porCorreo;
-      matricula.required = !porCorreo;
+      matricula.required = !porCorreo && !modoEjemplo;
     });
   });
   document.getElementById('autocompletarEjemplo').addEventListener('click', function(){
+    modoEjemplo = true;
+    perfil.modoEjemplo = true;
+    documentoIdentidad.required = false;
+    matricula.required = false;
     document.getElementById('tipoDocumento').value = 'DNI';
     var opcionCorreo = document.querySelector('input[name="metodoAcademico"][value="correo"]');
     opcionCorreo.checked = true;
@@ -117,7 +124,13 @@
       var correoPersonal = personales.some(function(proveedor){ return dominio === proveedor || dominio.endsWith('.' + proveedor); });
       if (!dominioValido || correoPersonal){ mensaje.textContent = 'Usa un correo institucional de tu universidad o elige el resguardo de matrícula.'; correo.focus(); return; }
     }
-    perfil.verificacionInquilino = { identidadAdjuntada:true, credencialAcademica:metodo, solvenciaAdjuntada:document.getElementById('solvencia').files.length > 0 };
+    perfil.verificacionInquilino = {
+      identidadAdjuntada:documentoIdentidad.files.length > 0,
+      credencialAcademica:metodo,
+      matriculaAdjuntada:matricula.files.length > 0,
+      solvenciaAdjuntada:document.getElementById('solvencia').files.length > 0,
+      verificacionDeEjemplo:modoEjemplo
+    };
     try { sessionStorage.setItem('pm_onboarding_user', JSON.stringify(perfil)); }
     catch(e){ mensaje.textContent = 'No se pudo guardar el estado de verificación en esta sesión.'; return; }
     window.location.href = 'encuesta.html';
