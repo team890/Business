@@ -62,12 +62,12 @@
       </div>
       <div id="bloqueMatricula" class="oculto">
         <label class="campo" for="resguardoMatricula">Resguardo de matrícula vigente</label>
-        <input id="resguardoMatricula" type="file" accept="image/*,.pdf">
+        <input id="resguardoMatricula" type="file" accept="image/*,.pdf" required>
       </div>
     </section>
     <section class="seccion">
-      <h2>Solvencia <span style="font-weight:500;color:#72728c">(opcional)</span></h2>
-      <p>Puedes adjuntar justificantes propios o avales de padres/tutores para transmitir mayor confianza al arrendador.</p>
+      <h2>Solvencia</h2>
+      <p>Puedes adjuntar justificantes propios o avales de padres/tutores para transmitir mayor confianza al arrendador (opcional).</p>
       <label class="campo" for="solvencia">Justificantes de ingresos o avales</label>
       <input id="solvencia" type="file" accept="image/*,.pdf" multiple>
     </section>
@@ -85,7 +85,8 @@
   var correo = document.getElementById('correoUniversidad');
   var matricula = document.getElementById('resguardoMatricula');
   var documentoIdentidad = document.getElementById('documentoIdentidad');
-  var modoEjemplo = perfil.modoEjemplo === true;
+  var solvencia = document.getElementById('solvencia');
+  var modoEjemplo = false;
   documentoIdentidad.required = !modoEjemplo;
   document.querySelectorAll('input[name="metodoAcademico"]').forEach(function(opcion){
     opcion.addEventListener('change', function(){
@@ -128,7 +129,7 @@
       identidadAdjuntada:documentoIdentidad.files.length > 0,
       credencialAcademica:metodo,
       matriculaAdjuntada:matricula.files.length > 0,
-      solvenciaAdjuntada:document.getElementById('solvencia').files.length > 0,
+      solvenciaAdjuntada:solvencia.files.length > 0,
       verificacionDeEjemplo:modoEjemplo
     };
     try { sessionStorage.setItem('pm_onboarding_user', JSON.stringify(perfil)); }

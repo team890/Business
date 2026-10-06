@@ -84,7 +84,7 @@
       <img id="fotoCapturada" alt="Captura en directo del inmueble">
       <p id="estadoCamara" aria-live="polite"></p>
     </section>
-    <p class="nota">El botón de ejemplo permite continuar sin adjuntar documentos; sin usarlo, los documentos son obligatorios. La captura del inmueble con la cámara sigue siendo necesaria. Esta demo no envía ni conserva archivos.</p>
+    <p class="nota">El botón de ejemplo permite continuar sin adjuntar documentos ni capturar una foto en directo. Si no lo pulsas, tendrás que hacer la foto con la cámara.</p>
     <button class="continuar" type="submit">Guardar verificación y ver mis inmuebles</button>
     <div id="mensaje" role="alert"></div>
   </form>
@@ -100,13 +100,22 @@
   var captura = document.getElementById('fotoCapturada');
   var stream = null;
   var fotoLista = false;
-  var modoEjemplo = perfil.modoEjemplo === true;
+  var modoEjemplo = false;
+  var fotoOmitidaPorEjemplo = modoEjemplo;
   var archivos = [document.getElementById('documentoIdentidad'), document.getElementById('documentoDerecho'), document.getElementById('reciboDomicilio')];
   archivos.forEach(function(archivo){ archivo.required = !modoEjemplo; });
   document.getElementById('autocompletarEjemplo').addEventListener('click', function(){
     modoEjemplo = true;
     perfil.modoEjemplo = true;
+    fotoOmitidaPorEjemplo = true;
     archivos.forEach(function(archivo){ archivo.required = false; });
+    if (stream){
+      stream.getTracks().forEach(function(track){ track.stop(); });
+      stream = null;
+      video.srcObject = null;
+    }
+    document.getElementById('capturar').disabled = true;
+    document.getElementById('estadoCamara').textContent = 'Foto omitida por el autocompletado de ejemplo.';
     document.getElementById('empresa').value = 'Residencias Sol de Barcelona, S.L.';
     document.getElementById('cif').value = 'B12345678';
     document.getElementById('representante').value = 'Marcos Ejemplo';
@@ -144,13 +153,15 @@
     var mensaje = document.getElementById('mensaje');
     mensaje.textContent = '';
     if (!this.reportValidity()) return;
-    if (!fotoLista){ mensaje.textContent = 'Captura una foto en directo desde la cámara antes de continuar.'; document.getElementById('iniciarCamara').focus(); return; }
+    if (!fotoLista && !fotoOmitidaPorEjemplo){ mensaje.textContent = 'Captura una foto en directo desde la cámara antes de continuar o pulsa el botón de autocompletar ejemplo.'; document.getElementById('iniciarCamara').focus(); return; }
     perfil.arrendatario = {
       empresa:document.getElementById('empresa').value.trim(),
       representante:document.getElementById('representante').value.trim(),
       direccionOferta:document.getElementById('direccionOferta').value.trim(),
       requisitosCompletos:true,
       documentosAdjuntados:archivos.every(function(archivo){ return archivo.files.length > 0; }),
+      fotoDirectaAdjuntada:fotoLista,
+      fotoOmitidaPorEjemplo:fotoOmitidaPorEjemplo,
       verificacionDeEjemplo:modoEjemplo
     };
     try { sessionStorage.setItem('pm_onboarding_user', JSON.stringify(perfil)); }
